@@ -15,16 +15,16 @@ Backend code for ACME BUY
 - **Cookie**: cookie-parser
 - **JWT**: jsonwebtoken
 - **Real-time Chat**: socket.io
-- **Media Management**: cloudinary
+- **Media (Image) Storage Management**: cloudinary
 - **Cross-Origin Resource Sharing**: cors
 - **Database**: mongoose
-- **File Upload**: multer
+- **File Upload**: formidable
 - **Payment**: stripe
 - **Other Packages**: uuid, date-fns, dotenv
 
 ## 🦄 Unique Features
 
-- ...
+- password encryption
 
 ## 🏋️‍♀️ Challenges Faced
 
@@ -33,3 +33,4 @@ Backend code for ACME BUY
 ## 📋 Coming Next
 
 - [ ]: When to use OAuth over jsonwebtoken?
+- [ ]: should I use http-errors package?

@@ -1,24 +1,20 @@
 import express from "express";
-import mongoose from "mongoose";
+
 import "dotenv/config";
 import routes from "@/routes/index";
 import cors from "cors";
 import cookieParser from "cookie-parser";
+import connectDB from "@/utils/db";
 
 // Database Setup
-const db_port = process.env.DATABASE_PORT;
-const db_name = process.env.DATABASE_NAME;
-mongoose.connect(`mongodb://127.0.0.1:${db_port}/${db_name}`);
-const db = mongoose.connection;
-db.once("open", () => console.log("MongoDB connected successfully!"));
-db.on("error", console.error.bind(console, "MongoDB connection error:"));
+connectDB(); // TODO: why I don't need to use await? Top-level 'await' expressions are only allowed when the 'module' option is set to 'es2022', 'esnext', 'system', 'node16', 'nodenext', or 'preserve', and the 'target' option is set to 'es2017' or higher
 
 // Server Setup
 const app = express();
 app.use(
   cors({
     origin: ["http://localhost:3000"], //TODO: prod env
-    credentials: true, // TODO: what is it?
+    credentials: true, // This allows cookies to be sent in cross-origin requests
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
   })
 );

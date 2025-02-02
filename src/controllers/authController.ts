@@ -1,6 +1,133 @@
 import { Request, Response } from "express";
-export class authController {
+import Admin from "@/models/AdminModel";
+import Seller from "@/models/SellerModel";
+import { apiReponse, apiReponseGeneralError } from "@/utils/apiReponse";
+import argon2 from "argon2";
+import createToken, { cookieOptions } from "@/utils/createToken";
+import { AuthenticatedRequest } from "@/middlewares/authMiddleware";
+import { RoleEnum, SellerStatusEnum } from "@/utils/enums";
+
+export default class authController {
+  // Admin Login
   static admin_login = async (req: Request, res: Response) => {
-    console.log(req.body);
+    const { email, password } = req.body;
+    try {
+      const admin = await Admin.findOne({ email }).collation({
+        locale: "en",
+        strength: 2,
+      });
+
+      if (admin) {
+        if (await argon2.verify(admin.password, password)) {
+          // generate cookie
+          const accessToken = createToken({
+            email,
+            role: RoleEnum.Admin,
+          });
+          res.cookie("accessToken", accessToken, cookieOptions);
+          return apiReponse(res, 200, {
+            message: "Login success.",
+            accessToken, // TODO: remove accessToken later, not recommended
+          });
+        } else {
+          return apiReponse(res, 404, { error: "Password does not match." });
+        }
+      } else {
+        return apiReponse(res, 404, { error: "Email not found." });
+      }
+    } catch (e) {
+      return apiReponseGeneralError(res, e as Error);
+    }
+  };
+
+  // Seller Signup
+  static seller_signup = async (req: Request, res: Response) => {
+    const { firstname, lastname, email, password, signupMethod } = req.body;
+
+    try {
+      // check email existing
+      const existingUser = await Seller.findOne({ email });
+      if (existingUser) {
+        return apiReponse(res, 409, { error: "Email already exists." });
+      }
+
+      const seller = new Seller({
+        firstname,
+        lastname,
+        email,
+        password,
+        signupMethod,
+        status: SellerStatusEnum.Pending,
+      });
+      const returnedSeller = await seller.save();
+
+      // TODO: you might want to create seller_customer schema. See video 190
+      const accessToken = createToken({
+        email,
+        role: RoleEnum.Seller,
+      }); // the reason to include id and role is to ensure a unique token for each user
+      res.cookie("accessToken", accessToken, cookieOptions);
+      return apiReponse(res, 201, {
+        message: "New seller successfully created.",
+        accessToken,
+      }); // TODO: remove accessToken later, not recommended
+    } catch (e) {
+      return apiReponseGeneralError(res, e as Error);
+    }
+  };
+
+  // Seller Login
+  static seller_login = async (req: Request, res: Response) => {
+    const { email, password } = req.body;
+    try {
+      const seller = await Seller.findOne({ email }).collation({
+        locale: "en",
+        strength: 2,
+      });
+
+      if (seller) {
+        if (await argon2.verify(seller.password, password)) {
+          // generate cookie
+          const accessToken = createToken({
+            email,
+            role: RoleEnum.Seller,
+          });
+          res.cookie("accessToken", accessToken, cookieOptions);
+          return apiReponse(res, 200, {
+            message: "Login success.",
+            accessToken, // TODO: remove accessToken later, not recommended
+          });
+        } else {
+          return apiReponse(res, 404, { error: "Password does not match." });
+        }
+      } else {
+        return apiReponse(res, 404, { error: "Email not found." });
+      }
+    } catch (e) {
+      return apiReponseGeneralError(res, e as Error);
+    }
+  };
+
+  static get_user = async (req: AuthenticatedRequest, res: Response) => {
+    const { email, role } = req; // get from middleware
+
+    try {
+      if (role === RoleEnum.Admin) {
+        const admin = await Admin.findOne({ email }).collation({
+          locale: "en",
+          strength: 2,
+        });
+        return apiReponse(res, 200, { userInfo: admin });
+      } else if (role === RoleEnum.Seller) {
+        const seller = await Seller.findOne({ email }).collation({
+          locale: "en",
+          strength: 2,
+        });
+        return apiReponse(res, 200, { userInfo: seller });
+      }
+      // TODO: customer role
+    } catch (e) {
+      return apiReponseGeneralError(res, e as Error);
+    }
   };
 }
