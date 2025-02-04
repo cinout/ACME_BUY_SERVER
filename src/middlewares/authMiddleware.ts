@@ -14,6 +14,7 @@ async function authMiddleware(
   next: NextFunction
 ) {
   const accessToken = req.cookies.accessToken;
+
   if (!accessToken) {
     return apiReponse(res, 401, {
       error: "Authentication failed. Please login again.",
@@ -24,8 +25,9 @@ async function authMiddleware(
         accessToken,
         process.env.AUTH_SECRET as string
       ) as Record<string, unknown>;
-      req.role = tokenDecoded.role as string;
+
       // req.id = tokenDecoded.id as string;
+      req.role = tokenDecoded.role as string;
       req.email = tokenDecoded.email as string;
     } catch (e) {
       return apiReponse(res, 401, {

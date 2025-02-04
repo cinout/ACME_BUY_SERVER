@@ -9,7 +9,10 @@ import { RoleEnum, SellerStatusEnum } from "@/utils/enums";
 
 export default class authController {
   // Admin Login
-  static admin_login = async (req: Request, res: Response) => {
+  static admin_login = async (
+    req: Request,
+    res: Response
+  ): Promise<Response> => {
     const { email, password } = req.body;
     try {
       const admin = await Admin.findOne({ email }).collation({
