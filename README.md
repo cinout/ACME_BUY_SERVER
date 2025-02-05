@@ -18,7 +18,7 @@ Backend code for ACME BUY
 - **Media (Image) Storage Management**: cloudinary
 - **Cross-Origin Resource Sharing**: cors
 - **Database**: mongoose
-- **File Upload**: formidable
+- **File Upload**: formidable (?should I remove it?), graphql-upload
 - **Payment**: stripe
 - **Other Packages**: uuid, date-fns, dotenv
 - **API**: GraphQL (Apollo), RESTful
@@ -26,6 +26,7 @@ Backend code for ACME BUY
 ## 🦄 Unique Features
 
 - password encryption
+- for generic gql error, send to clinet the general "internal server error"; but for detailed error, show it to clients
 
 ## 🏋️‍♀️ Challenges Faced
 

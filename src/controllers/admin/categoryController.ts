@@ -5,6 +5,7 @@ import formidable from "formidable";
 import cloudinary from "@/utils/cloudConfig";
 import Category from "@/models/CategoryModel";
 
+// TODO: can delete this file
 export default class categoryController {
   static category_add = async (req: Request, res: Response) => {
     try {
