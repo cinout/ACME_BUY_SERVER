@@ -2,6 +2,7 @@ import { SellerSignupMethodEnum, SellerStatusEnum } from "@/utils/enums";
 import { CallbackError, Schema, model } from "mongoose";
 import argon2 from "argon2";
 
+// TODO: for all models, we also need to add validations that are the same in front-end, to enhance security, especially if APIs are allowed to modify items in backend
 const sellerSchema = new Schema(
   {
     // Required
