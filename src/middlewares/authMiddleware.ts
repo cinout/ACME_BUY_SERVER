@@ -1,10 +1,11 @@
 import { apiReponse } from "@/utils/apiReponse";
 import jwt from "jsonwebtoken";
 import { Request, Response, NextFunction } from "express";
+import { RoleEnum } from "@/utils/enums";
 
 export interface AuthenticatedRequest extends Request {
-  // id?: string;
-  role?: string;
+  id?: string;
+  role?: RoleEnum;
   email?: string;
 }
 
@@ -26,8 +27,8 @@ async function authMiddleware(
         process.env.AUTH_SECRET as string
       ) as Record<string, unknown>;
 
-      // req.id = tokenDecoded.id as string;
-      req.role = tokenDecoded.role as string;
+      req.id = tokenDecoded.id as string;
+      req.role = tokenDecoded.role as RoleEnum;
       req.email = tokenDecoded.email as string;
     } catch (e) {
       return apiReponse(res, 401, {

@@ -2,7 +2,8 @@ import { Schema, model, CallbackError } from "mongoose";
 import argon2 from "argon2";
 
 const adminSchema = new Schema({
-  name: { type: String, required: true },
+  firstname: { type: String, required: true },
+  lastname: { type: String, required: true },
   email: { type: String, required: true },
   password: { type: String, required: true },
   image: { type: String },
@@ -24,6 +25,16 @@ adminSchema.pre("save", async function (next) {
   } catch (err: unknown) {
     next(err as CallbackError);
   }
+});
+
+// Transform _id to id
+adminSchema.set("toJSON", {
+  virtuals: true,
+  transform: (doc, ret) => {
+    ret.id = ret._id.toString();
+    delete ret._id;
+    delete ret.__v; // Optional: Remove __v (version key)
+  },
 });
 
 const Admin = model("Admin", adminSchema);

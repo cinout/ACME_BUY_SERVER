@@ -1,8 +1,7 @@
 import express, { Response } from "express";
 import authRoutes from "@/routes/authRoute";
-import categoryRoutes from "@/routes/admin/categoryRoute";
 import { expressMiddleware } from "@apollo/server/express4";
-import { gqlServer } from "./graphql";
+import { gqlServer } from "./graphqlRoute";
 import authMiddleware, {
   AuthenticatedRequest,
 } from "@/middlewares/authMiddleware";
@@ -11,7 +10,6 @@ import authMiddleware, {
 const router = express.Router();
 
 router.use("/auth", authRoutes);
-router.use("/admin/category", categoryRoutes);
 
 async function initializeGraphQL() {
   await gqlServer.start(); // Ensure the server is started
@@ -26,7 +24,8 @@ async function initializeGraphQL() {
       context: async ({ req }: { req: AuthenticatedRequest }) => {
         const role = req.role;
         const email = req.email;
-        return { role, email };
+        const id = req.id;
+        return { id, role, email };
       },
     })
   );

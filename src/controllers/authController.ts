@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
-import Admin from "@/models/AdminModel";
-import Seller from "@/models/SellerModel";
+import AdminModel from "@/models/AdminModel";
+import SellerModel from "@/models/SellerModel";
 import { apiReponse, apiReponseGeneralError } from "@/utils/apiReponse";
 import argon2 from "argon2";
 import createToken, { cookieOptions } from "@/utils/createToken";
@@ -15,7 +15,7 @@ export default class authController {
   ): Promise<Response> => {
     const { email, password } = req.body;
     try {
-      const admin = await Admin.findOne({ email }).collation({
+      const admin = await AdminModel.findOne({ email }).collation({
         locale: "en",
         strength: 2,
       });
@@ -24,6 +24,7 @@ export default class authController {
         if (await argon2.verify(admin.password, password)) {
           // generate cookie
           const accessToken = createToken({
+            id: admin.toJSON().id,
             email,
             role: RoleEnum.Admin,
           });
@@ -49,12 +50,12 @@ export default class authController {
 
     try {
       // check email existing
-      const existingUser = await Seller.findOne({ email });
+      const existingUser = await SellerModel.findOne({ email });
       if (existingUser) {
         return apiReponse(res, 409, { error: "Email already exists." });
       }
 
-      const seller = new Seller({
+      const returnedSeller = await SellerModel.create({
         firstname,
         lastname,
         email,
@@ -62,10 +63,10 @@ export default class authController {
         signupMethod,
         status: SellerStatusEnum.Pending,
       });
-      const returnedSeller = await seller.save();
 
       // TODO: you might want to create seller_customer schema. See video 190
       const accessToken = createToken({
+        id: returnedSeller.toJSON().id,
         email,
         role: RoleEnum.Seller,
       }); // the reason to include id and role is to ensure a unique token for each user
@@ -83,7 +84,7 @@ export default class authController {
   static seller_login = async (req: Request, res: Response) => {
     const { email, password } = req.body;
     try {
-      const seller = await Seller.findOne({ email }).collation({
+      const seller = await SellerModel.findOne({ email }).collation({
         locale: "en",
         strength: 2,
       });
@@ -92,6 +93,7 @@ export default class authController {
         if (await argon2.verify(seller.password, password)) {
           // generate cookie
           const accessToken = createToken({
+            id: seller.id,
             email,
             role: RoleEnum.Seller,
           });
@@ -116,19 +118,50 @@ export default class authController {
 
     try {
       if (role === RoleEnum.Admin) {
-        const admin = await Admin.findOne({ email }).collation({
+        const admin = await AdminModel.findOne({ email }).collation({
           locale: "en",
           strength: 2,
         });
-        return apiReponse(res, 200, { userInfo: admin });
+
+        if (admin) {
+          const { password, createdAt, updatedAt, ...rest } = admin.toJSON();
+          return apiReponse(res, 200, {
+            userInfo: rest,
+            role: RoleEnum.Admin,
+          });
+        } else {
+          apiReponse(res, 404, { message: "User not found." });
+        }
       } else if (role === RoleEnum.Seller) {
-        const seller = await Seller.findOne({ email }).collation({
+        const seller = await SellerModel.findOne({ email }).collation({
           locale: "en",
           strength: 2,
         });
-        return apiReponse(res, 200, { userInfo: seller });
+
+        if (seller) {
+          const { password, createdAt, updatedAt, ...rest } = seller.toJSON();
+          return apiReponse(res, 200, {
+            userInfo: rest,
+            role: RoleEnum.Seller,
+          });
+        } else {
+          apiReponse(res, 404, { message: "User not found." });
+        }
       }
       // TODO: customer role
+    } catch (e) {
+      return apiReponseGeneralError(res, e as Error);
+    }
+  };
+
+  static logout = async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      res.clearCookie("accessToken", {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict" as const,
+      });
+      return apiReponse(res, 200, { message: "Loggout successfully." });
     } catch (e) {
       return apiReponseGeneralError(res, e as Error);
     }

@@ -32,6 +32,10 @@ Backend code for ACME BUY
 
 - ...
 
+## 🏋️‍♀️ Attetion to Details
+
+- All routes check if the user role has access to the resource.
+
 ## 📋 Coming Next
 
 - [ ]: When to use OAuth over jsonwebtoken?

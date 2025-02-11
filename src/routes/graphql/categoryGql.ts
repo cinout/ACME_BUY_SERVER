@@ -1,27 +1,31 @@
 import CategoryModel from "@/models/CategoryModel";
 import {
-  checkEmptyFields,
   checkIdMongooseValid,
+  checkInputUpdateIsEmpty,
+  checkRole,
   gql_custom_code_bad_user_input,
   gqlGenericError,
 } from "@/utils/gqlErrorResponse";
-import { generateImageSlug } from "@/utils/strings";
 import { GraphQLError } from "graphql";
-import cloudinary from "@/utils/cloudConfig";
-import { UploadApiResponse, UploadStream } from "cloudinary";
-import { image_url_1 } from "@/utils/removeLater";
-import { FileUpload } from "graphql-upload/processRequest.mjs";
 import { uploadImage } from "@/utils/imageUpload";
+import { RoleEnum } from "@/utils/enums";
 
 export const typeDefCategory = `
   scalar Upload
+  scalar Date
+
+  input UpdateCategoryInput {
+    name: String
+    image: Upload
+  }
 
   type Category {
     id: ID!
+    createdAt: Date!
+    updatedAt: Date!
     name: String!
     imageUrl: String!
-    imageType: String!
-    slug: String!
+    imageName: String!
   }
 
   extend type Query {
@@ -30,7 +34,7 @@ export const typeDefCategory = `
 
   extend type Mutation {
     createCategory(name: String!, image: Upload!): Category!
-    updateCategory(id: ID!, name: String!, image: Upload!): Category!
+    updateCategory(id: ID!, input: UpdateCategoryInput!): Category!
     deleteCategory(id: ID!): String
   }  
 `;
@@ -49,10 +53,11 @@ export const resolversCategory = {
   Mutation: {
     createCategory: async (
       _,
-      { name, image }: { name: string; image: any }
+      { name, image }: { name: string; image: { file: any; name: string } },
+      { role }: { role: RoleEnum }
     ) => {
       try {
-        checkEmptyFields({ name, image });
+        checkRole(role, [RoleEnum.Admin]);
 
         const existingCategory = await CategoryModel.findOne({ name });
 
@@ -65,16 +70,11 @@ export const resolversCategory = {
           );
         }
 
-        const slug = generateImageSlug(name); // TODO: is it ideal
-
-        const { uploadResult, mimetype } = await uploadImage(image, "Category");
+        const uploadResult = await uploadImage(image, "Category");
 
         const newCategory = await CategoryModel.create({
           name,
-          imageUrl: image_url_1,
-          // TODO: imageUrl: (uploadResult as UploadApiResponse).url,
-          imageType: mimetype,
-          slug,
+          ...uploadResult,
         });
 
         return newCategory;
@@ -84,41 +84,29 @@ export const resolversCategory = {
     },
     updateCategory: async (
       _,
-      { id, name, image }: { id: string; name: string; image: any }
+      {
+        id,
+        input,
+      }: {
+        id: string;
+        input: { name?: string; image?: { file: any; name: string } };
+      },
+      { role }: { role: RoleEnum }
     ) => {
       try {
-        checkEmptyFields({ id, name, image });
+        checkRole(role, [RoleEnum.Admin]);
         checkIdMongooseValid(id);
+        checkInputUpdateIsEmpty(input);
 
-        const slug = generateImageSlug(name); // TODO: is it ideal?
-        let updateFields = {};
-        if (typeof image === "string") {
-          // the image is not updated
-          updateFields = {
-            imageUrl: image,
-            name,
-            slug,
-          };
-        } else {
-          // image is updated
-
-          const { uploadResult, mimetype } = await uploadImage(
-            image,
-            "Category"
-          );
-
-          updateFields = {
-            imageUrl: image_url_1,
-            // TODO: imageUrl: (uploadResult as UploadApiResponse).url,
-            name,
-            imageType: mimetype,
-            slug,
-          };
+        if (input.image) {
+          const uploadResult = await uploadImage(input.image, "Category");
+          const { image, ...rest } = input;
+          input = { ...rest, ...uploadResult };
         }
 
         const result = await CategoryModel.findOneAndUpdate(
           { _id: id },
-          updateFields,
+          input,
           { runValidators: true, new: true }
         );
 
@@ -133,9 +121,13 @@ export const resolversCategory = {
         gqlGenericError(e as Error);
       }
     },
-    deleteCategory: async (_, { id }: { id: string }) => {
+    deleteCategory: async (
+      _,
+      { id }: { id: string },
+      { role }: { role: RoleEnum }
+    ) => {
       try {
-        checkEmptyFields({ id });
+        checkRole(role, [RoleEnum.Admin]);
         checkIdMongooseValid(id);
         const result = await CategoryModel.deleteOne({ _id: id });
         if (result.deletedCount === 0) {

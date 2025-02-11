@@ -3,13 +3,27 @@ import { Schema, model } from "mongoose";
 const categorySchema = new Schema(
   {
     // Required
-    name: { type: String, required: true, index: true, unique: true },
+    name: { type: String, required: true },
     imageUrl: { type: String, required: true },
-    imageType: { type: String, required: true }, //TODO: is this needed?
-    slug: { type: String, required: true }, // TODO: is this needed?
+    imageName: { type: String, required: true },
   },
   { timestamps: true }
 );
+
+categorySchema.index(
+  { name: 1 },
+  { collation: { locale: "en", strength: 2 }, unique: true }
+); // be case insensitive
+
+// Transform _id to id
+categorySchema.set("toJSON", {
+  virtuals: true,
+  transform: (doc, ret) => {
+    ret.id = ret._id.toString();
+    delete ret._id;
+    delete ret.__v; // Optional: Remove __v (version key)
+  },
+});
 
 const Category = model("Category", categorySchema);
 export default Category;

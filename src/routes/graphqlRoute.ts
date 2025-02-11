@@ -4,6 +4,7 @@ import {
   resolversCategory,
   typeDefCategory,
 } from "@/routes/graphql/categoryGql";
+import { resolversProduct, typeDefProduct } from "@/routes/graphql/productGql";
 
 const typeDefQuery = `
   type Query {
@@ -16,8 +17,8 @@ const typeDefQuery = `
 `;
 
 export const gqlServer = new ApolloServer({
-  typeDefs: [typeDefQuery, typeDefCategory],
-  resolvers: [resolversCategory],
+  typeDefs: [typeDefQuery, typeDefCategory, typeDefProduct],
+  resolvers: [resolversCategory, resolversProduct],
   csrfPrevention: true, // TODO: still not recommended: https://www.apollographql.com/blog/file-upload-best-practices
   cache: "bounded", // TODO: what does this mean?
   formatError: (error) => {

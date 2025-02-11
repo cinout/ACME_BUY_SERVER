@@ -59,5 +59,15 @@ sellerSchema.pre("save", async function (next) {
   }
 });
 
+// Transform _id to id
+sellerSchema.set("toJSON", {
+  virtuals: true,
+  transform: (doc, ret) => {
+    ret.id = ret._id.toString();
+    delete ret._id;
+    delete ret.__v; // Optional: Remove __v (version key)
+  },
+});
+
 const Seller = model("Seller", sellerSchema);
 export default Seller;
