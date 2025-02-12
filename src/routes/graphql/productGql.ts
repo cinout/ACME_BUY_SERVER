@@ -45,11 +45,11 @@ export const typeDefProduct = `
   }
 
   extend type Query {
-    getAllProductsBySeller(sellerId: ID!): [Product!]!
+    getAllProductsBySeller: [Product!]!
   }  
 
   extend type Mutation {
-    createProduct(name: String!, brand: String!, images: [ImageWithID!]!, categoryId: ID!, sellerId: ID!, stock: Int!, price: Float!, discount: Float!, description: String): Product!
+    createProduct(name: String!, brand: String!, images: [ImageWithID!]!, categoryId: ID!, stock: Int!, price: Float!, discount: Float!, description: String): Product!
 
     updateProduct(id: ID!, input: UpdateProductInput!): Product!
     
@@ -61,12 +61,12 @@ export const resolversProduct = {
   Query: {
     getAllProductsBySeller: async (
       _,
-      { sellerId }: { sellerId: string },
-      { role }: { role: RoleEnum }
+      args,
+      { id, role }: { id: string; role: RoleEnum }
     ) => {
       try {
         checkRole(role, [RoleEnum.Seller]);
-        const products = await ProductModel.find({ sellerId });
+        const products = await ProductModel.find({ sellerId: id });
         return products;
       } catch (e) {
         gqlGenericError(e as Error);
@@ -84,7 +84,6 @@ export const resolversProduct = {
         brand,
         description,
         categoryId,
-        sellerId,
         stock,
       }: {
         name: string;
@@ -94,10 +93,9 @@ export const resolversProduct = {
         brand: string;
         description: string;
         categoryId: string;
-        sellerId: string;
         stock: number;
       },
-      { role }: { role: RoleEnum }
+      { id, role }: { id: string; role: RoleEnum }
     ) => {
       try {
         checkRole(role, [RoleEnum.Seller]);
@@ -110,7 +108,7 @@ export const resolversProduct = {
           brand,
           description,
           categoryId,
-          sellerId,
+          sellerId: id,
           stock,
           images: uploadResult,
         });
@@ -120,7 +118,6 @@ export const resolversProduct = {
         gqlGenericError(e as Error);
       }
     },
-    // TODO: how to update "rating"?
     updateProduct: async (
       _,
       {
@@ -176,14 +173,14 @@ export const resolversProduct = {
         checkRole(role, [RoleEnum.Seller]);
         checkIdMongooseValid(id);
 
-        // const result = await CategoryModel.deleteOne({ _id: id });
-        // if (result.deletedCount === 0) {
-        //   throw new GraphQLError(`The category does not exist.`, {
-        //     extensions: gql_custom_code_bad_user_input,
-        //   });
-        // } else {
-        //   return id;
-        // }
+        const result = await ProductModel.deleteOne({ _id: id });
+        if (result.deletedCount === 0) {
+          throw new GraphQLError(`The product does not exist.`, {
+            extensions: gql_custom_code_bad_user_input,
+          });
+        } else {
+          return id;
+        }
       } catch (e) {
         gqlGenericError(e as Error);
       }

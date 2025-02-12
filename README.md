@@ -38,5 +38,6 @@ Backend code for ACME BUY
 
 ## 📋 Coming Next
 
-- [ ]: When to use OAuth over jsonwebtoken?
-- [ ]: should I use http-errors package?
+- [ ] When to use OAuth over jsonwebtoken?
+- [ ] should I use http-errors package?
+- [ ] delete image from cloudinary if image is removed

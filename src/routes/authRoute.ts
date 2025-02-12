@@ -13,8 +13,8 @@ router.post("/seller-signup", authController.seller_signup);
 // Seller Login
 router.post("/seller-login", authController.seller_login);
 
-// Get User Info
-router.get("/get-user", authMiddleware, authController.get_user);
+// Get User Info (moved to GQL)
+// router.get("/get-user", authMiddleware, authController.get_user);
 
 // Log Out
 router.post("/logout", authMiddleware, authController.logout);

@@ -36,7 +36,8 @@ const sellerSchema = new Schema(
     city: { type: String },
     zipCode: { type: String },
 
-    image: { type: String },
+    imageUrl: { type: String },
+    imageName: { type: String },
   },
   { timestamps: true }
 );
