@@ -7,10 +7,8 @@ const adminSchema = new Schema({
   lastname: { type: String, required: true },
   email: { type: String, required: true },
   password: { type: String, required: true },
-
-  // Ootional
-  imageUrl: { type: String },
-  imageName: { type: String },
+  imageUrl: { type: String, required: true },
+  imageName: { type: String, required: true },
 });
 
 adminSchema.index(

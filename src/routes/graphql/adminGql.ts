@@ -19,8 +19,8 @@ export const typeDefAdmin = `
     lastname: String!
     email: String!
     password: String!
-    imageUrl: String
-    imageName: String
+    imageUrl: String!
+    imageName: String!
   }
 
   input UpdateAdminInput {
@@ -33,7 +33,7 @@ export const typeDefAdmin = `
   }
 
   extend type Query {
-    getCurrrentAdmin: Admin!
+    getCurrentAdmin: Admin!
   }  
 
   
@@ -41,7 +41,7 @@ export const typeDefAdmin = `
 
 export const resolversAdmin = {
   Query: {
-    getCurrrentAdmin: async (
+    getCurrentAdmin: async (
       _,
       args,
       { id, role }: { id: string; role: RoleEnum }

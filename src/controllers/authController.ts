@@ -46,7 +46,8 @@ export default class authController {
 
   // Seller Signup
   static seller_signup = async (req: Request, res: Response) => {
-    const { firstname, lastname, email, password, signupMethod } = req.body;
+    const { firstname, lastname, email, password, signupMethod, shopName } =
+      req.body;
 
     try {
       // check email existing
@@ -60,8 +61,12 @@ export default class authController {
         lastname,
         email,
         password,
+        shopName,
         signupMethod,
         status: SellerStatusEnum.Pending,
+        imageName: "default_avatar.png",
+        imageUrl:
+          "http://res.cloudinary.com/dcavpobmc/image/upload/v1739189986/Products/goyrtskikfcxxbvtndtn.png", // TODO: update the default image
       });
 
       // TODO: you might want to create seller_customer schema. See video 190

@@ -1,11 +1,13 @@
 import { RoleEnum } from "@/utils/enums";
 import {
+  checkInputUpdateIsEmpty,
   checkRole,
   gql_custom_code_bad_user_input,
   gqlGenericError,
 } from "@/utils/gqlErrorResponse";
 import SellerModel from "@/models/SellerModel";
 import { GraphQLError } from "graphql";
+import { uploadImage } from "@/utils/imageUpload";
 
 export const typeDefSeller = `
   scalar Upload
@@ -33,32 +35,35 @@ export const typeDefSeller = `
     password: String!
     status: SellerStatusEnum!
     signupMethod: SellerSignupMethodEnum!
+    shopName: String!
     country: String
     state: String
     city: String
     zipCode: String
-    imageUrl: String
-    imageName: String
+    imageUrl: String!
+    imageName: String!
   }
 
   input UpdateSellerInput {
     firstname: String
     lastname: String
-    email: String
     password: String
     status: SellerStatusEnum
-    signupMethod: SellerSignupMethodEnum
+    shopName: String
     country: String
     state: String
     city: String
     zipCode: String
-    imageUrl: String
-    imageName: String
+    image: Upload
   }
 
   extend type Query {
     getCurrentSeller: Seller!
-  }  
+  }
+  
+  extend type Mutation {
+    updateCurrentSeller(input: UpdateSellerInput!): Seller!
+  }
 `;
 
 export const resolversSeller = {
@@ -77,6 +82,39 @@ export const resolversSeller = {
           throw new GraphQLError(`The seller does not exist.`, {
             extensions: gql_custom_code_bad_user_input,
           });
+        }
+      } catch (e) {
+        gqlGenericError(e as Error);
+      }
+    },
+  },
+  Mutation: {
+    updateCurrentSeller: async (
+      _,
+      { input }: { input: any },
+      { id, role }: { id: string; role: RoleEnum }
+    ) => {
+      try {
+        checkRole(role, [RoleEnum.Seller]);
+        checkInputUpdateIsEmpty(input);
+
+        if (input.image) {
+          const uploadResult = await uploadImage(input.image, "Seller");
+          const { image, ...rest } = input;
+          input = { ...rest, ...uploadResult };
+        }
+
+        const result = await SellerModel.findOneAndUpdate({ _id: id }, input, {
+          runValidators: true,
+          new: true,
+        });
+
+        if (!result) {
+          throw new GraphQLError(`The seller does not exist.`, {
+            extensions: gql_custom_code_bad_user_input,
+          });
+        } else {
+          return result;
         }
       } catch (e) {
         gqlGenericError(e as Error);

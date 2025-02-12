@@ -29,15 +29,15 @@ const sellerSchema = new Schema(
       ],
       required: true,
     },
+    imageUrl: { type: String, required: true },
+    imageName: { type: String, required: true },
+    shopName: { type: String, required: true },
 
     // Optional
     country: { type: String },
     state: { type: String },
     city: { type: String },
     zipCode: { type: String },
-
-    imageUrl: { type: String },
-    imageName: { type: String },
   },
   { timestamps: true }
 );
