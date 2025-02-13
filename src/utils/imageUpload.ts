@@ -1,5 +1,5 @@
 import cloudinary from "./cloudConfig";
-import { image_url_2, image_url_4 } from "./removeLater";
+import { randomDefaultImage } from "./removeLater";
 
 export async function uploadImage(
   image: { file: any; name: string },
@@ -10,7 +10,7 @@ export async function uploadImage(
   } else {
     const { createReadStream } = image.file.file;
     const stream = createReadStream();
-    return { imageUrl: image_url_4, imageName: image.name };
+    return { imageUrl: randomDefaultImage(), imageName: image.name };
 
     // TODO: remove comment
     // const uploadResult = await new Promise((resolve, reject) => {
@@ -42,7 +42,7 @@ export async function uploadImages(
       const stream = createReadStream();
 
       return new Promise((resolve, reject) => {
-        resolve({ id: image.id, file: image_url_2, name: image.name });
+        resolve({ id: image.id, file: randomDefaultImage(), name: image.name });
 
         // TODO: remove comment
         // const uploadStream = cloudinary.uploader.upload_stream(

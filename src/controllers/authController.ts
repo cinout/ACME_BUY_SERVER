@@ -6,6 +6,7 @@ import argon2 from "argon2";
 import createToken, { cookieOptions } from "@/utils/createToken";
 import { AuthenticatedRequest } from "@/middlewares/authMiddleware";
 import { RoleEnum, SellerStatusEnum } from "@/utils/enums";
+import { randomDefaultImage } from "@/utils/removeLater";
 
 export default class authController {
   // Admin Login
@@ -65,8 +66,7 @@ export default class authController {
         signupMethod,
         status: SellerStatusEnum.Pending,
         imageName: "default_avatar.png",
-        imageUrl:
-          "http://res.cloudinary.com/dcavpobmc/image/upload/v1739189986/Products/goyrtskikfcxxbvtndtn.png", // TODO: update the default image
+        imageUrl: randomDefaultImage(), // TODO: update the default image
       });
 
       // TODO: you might want to create seller_customer schema. See video 190
