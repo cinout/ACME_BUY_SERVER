@@ -8,6 +8,7 @@ import {
 import SellerModel from "@/models/SellerModel";
 import { GraphQLError } from "graphql";
 import { uploadImage } from "@/utils/imageUpload";
+import { FileUpload } from "graphql-upload/processRequest.mjs";
 
 export const typeDefSeller = `
   scalar Upload
@@ -70,8 +71,8 @@ export const typeDefSeller = `
 export const resolversSeller = {
   Query: {
     getCurrentSeller: async (
-      _,
-      args,
+      _: unknown,
+      __: void,
       { id, role }: { id: string; role: RoleEnum }
     ) => {
       try {
@@ -89,9 +90,9 @@ export const resolversSeller = {
       }
     },
     getAllSellers: async (
-      _,
-      args,
-      { id, role }: { id: string; role: RoleEnum }
+      _: unknown,
+      args: void,
+      { role }: { role: RoleEnum }
     ) => {
       try {
         checkRole(role, [RoleEnum.Admin]);
@@ -104,8 +105,15 @@ export const resolversSeller = {
   },
   Mutation: {
     updateCurrentSeller: async (
-      _,
-      { input }: { input: any },
+      _: unknown,
+      {
+        input,
+      }: {
+        input: {
+          image?: { file: string | { file: FileUpload }; name: string };
+          name?: string;
+        };
+      },
       { id, role }: { id: string; role: RoleEnum }
     ) => {
       try {
@@ -135,9 +143,9 @@ export const resolversSeller = {
       }
     },
     updateSellerStatusByAdmin: async (
-      _,
+      _: unknown,
       { id: sellerId, status }: { id: string; status: SellerStatusEnum },
-      { id: tokenId, role }: { id: string; role: RoleEnum }
+      { role }: { role: RoleEnum }
     ) => {
       try {
         checkRole(role, [RoleEnum.Admin]);

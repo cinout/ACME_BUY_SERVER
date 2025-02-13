@@ -1,8 +1,9 @@
+import { FileUpload } from "graphql-upload/processRequest.mjs";
 import cloudinary from "./cloudConfig";
 import { randomDefaultImage } from "./removeLater";
 
 export async function uploadImage(
-  image: { file: any; name: string },
+  image: { name: string; file: string | { file: FileUpload } },
   folder: string
 ) {
   if (typeof image.file === "string") {
@@ -31,9 +32,9 @@ export async function uploadImage(
 }
 
 export async function uploadImages(
-  images: { id: string; file: any; name: string }[],
+  images: { id: string; file: string | { file: FileUpload }; name: string }[],
   folder: string
-) {
+): Promise<{ id: string; file: string; name: string }[]> {
   const uploadPromises = images.map((image) => {
     if (typeof image.file === "string") {
       return image;
@@ -58,7 +59,7 @@ export async function uploadImages(
         // stream.pipe(uploadStream);
       });
     }
-  });
+  }) as { id: string; file: string; name: string }[];
 
   return Promise.all(uploadPromises);
 }

@@ -68,7 +68,7 @@ export function checkRole(userRole: RoleEnum, requiredRoles: RoleEnum[]) {
 }
 
 // Check if the input (in update resolver) is empty
-export function checkInputUpdateIsEmpty(input: any) {
+export function checkInputUpdateIsEmpty(input: Record<string, unknown>) {
   if (Object.keys(input).length === 0) {
     throw new GraphQLError(`No field is updated.`, {
       extensions: gql_custom_code_bad_user_input,

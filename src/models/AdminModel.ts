@@ -29,10 +29,11 @@ adminSchema.pre("save", async function (next) {
   }
 });
 
-// Transform _id to id
 adminSchema.set("toJSON", {
-  virtuals: true,
+  virtuals: true, // include virtual fields, which are not stored in MongoDB but computed on the fly.
   transform: (doc, ret) => {
+    // doc:  The raw Mongoose document.
+    // ret:  The plain JSON object that will be returned.
     ret.id = ret._id.toString();
     delete ret._id;
     delete ret.__v; // Optional: Remove __v (version key)

@@ -1,4 +1,4 @@
-import express, { Response } from "express";
+import express from "express";
 import authRoutes from "@/routes/authRoute";
 import { expressMiddleware } from "@apollo/server/express4";
 import { gqlServer } from "./graphqlRoute";
@@ -13,7 +13,6 @@ router.use("/auth", authRoutes);
 
 async function initializeGraphQL() {
   await gqlServer.start(); // Ensure the server is started
-  // server.applyMiddleware({ app }); TODO: is this needed?
 
   // Apollo Studio Explorer: http://localhost:8000/api/graphql
   router.use(
@@ -22,9 +21,9 @@ async function initializeGraphQL() {
     expressMiddleware(gqlServer, {
       // add to context param in resolvers
       context: async ({ req }: { req: AuthenticatedRequest }) => {
-        const role = req.role;
-        const email = req.email;
-        const id = req.id;
+        const role = req.role!;
+        const email = req.email!;
+        const id = req.id!;
         return { id, role, email };
       },
     })

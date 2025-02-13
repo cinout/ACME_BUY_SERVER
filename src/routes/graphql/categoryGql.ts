@@ -9,6 +9,7 @@ import {
 import { GraphQLError } from "graphql";
 import { uploadImage } from "@/utils/imageUpload";
 import { RoleEnum } from "@/utils/enums";
+import { FileUpload } from "graphql-upload/processRequest.mjs";
 
 export const typeDefCategory = `
   scalar Upload
@@ -41,8 +42,14 @@ export const typeDefCategory = `
 
 export const resolversCategory = {
   Query: {
-    getAllCategories: async () => {
+    getAllCategories: async (
+      _: unknown,
+      __: void,
+
+      { role }: { role: RoleEnum }
+    ) => {
       try {
+        checkRole(role, [RoleEnum.Admin]);
         const allCategories = await CategoryModel.find();
         return allCategories;
       } catch (e) {
@@ -52,8 +59,14 @@ export const resolversCategory = {
   },
   Mutation: {
     createCategory: async (
-      _,
-      { name, image }: { name: string; image: { file: any; name: string } },
+      _: unknown,
+      {
+        name,
+        image,
+      }: {
+        name: string;
+        image: { file: string | { file: FileUpload }; name: string };
+      },
       { role }: { role: RoleEnum }
     ) => {
       try {
@@ -83,13 +96,16 @@ export const resolversCategory = {
       }
     },
     updateCategory: async (
-      _,
+      _: unknown,
       {
         id,
         input,
       }: {
         id: string;
-        input: { name?: string; image?: { file: any; name: string } };
+        input: {
+          name?: string;
+          image?: { file: string | { file: FileUpload }; name: string };
+        };
       },
       { role }: { role: RoleEnum }
     ) => {
@@ -100,6 +116,7 @@ export const resolversCategory = {
 
         if (input.image) {
           const uploadResult = await uploadImage(input.image, "Category");
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
           const { image, ...rest } = input;
           input = { ...rest, ...uploadResult };
         }
@@ -122,7 +139,7 @@ export const resolversCategory = {
       }
     },
     deleteCategory: async (
-      _,
+      _: unknown,
       { id }: { id: string },
       { role }: { role: RoleEnum }
     ) => {

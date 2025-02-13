@@ -10,6 +10,7 @@ import {
 import { GraphQLError } from "graphql";
 import { uploadImages } from "@/utils/imageUpload";
 import { RoleEnum } from "@/utils/enums";
+import { FileUpload } from "graphql-upload/processRequest.mjs";
 
 export const typeDefProduct = `
   scalar Upload
@@ -60,8 +61,8 @@ export const typeDefProduct = `
 export const resolversProduct = {
   Query: {
     getAllProductsBySeller: async (
-      _,
-      args,
+      _: unknown,
+      args: void,
       { id, role }: { id: string; role: RoleEnum }
     ) => {
       try {
@@ -75,7 +76,7 @@ export const resolversProduct = {
   },
   Mutation: {
     createProduct: async (
-      _,
+      _: unknown,
       {
         name,
         images,
@@ -87,7 +88,11 @@ export const resolversProduct = {
         stock,
       }: {
         name: string;
-        images: { id: string; file: any; name: string }[];
+        images: {
+          id: string;
+          file: string | { file: FileUpload };
+          name: string;
+        }[];
         price: number;
         discount: number;
         brand: string;
@@ -119,13 +124,19 @@ export const resolversProduct = {
       }
     },
     updateProduct: async (
-      _,
+      _: unknown,
       {
         id,
         input,
       }: {
         id: string;
-        input: any;
+        input: {
+          images: {
+            id: string;
+            file: string | { file: FileUpload };
+            name: string;
+          }[];
+        };
         // name: string;
         // images: { id: string; file: any; name: string }[];
         // price: number;
@@ -165,7 +176,7 @@ export const resolversProduct = {
       }
     },
     deleteProduct: async (
-      _,
+      _: unknown,
       { id }: { id: string },
       { role }: { role: RoleEnum }
     ) => {

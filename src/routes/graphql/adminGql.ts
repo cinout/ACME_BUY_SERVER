@@ -42,8 +42,8 @@ export const typeDefAdmin = `
 export const resolversAdmin = {
   Query: {
     getCurrentAdmin: async (
-      _,
-      args,
+      _: unknown,
+      args: void,
       { id, role }: { id: string; role: RoleEnum }
     ) => {
       try {

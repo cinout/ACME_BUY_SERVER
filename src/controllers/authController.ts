@@ -10,10 +10,7 @@ import { randomDefaultImage } from "@/utils/removeLater";
 
 export default class authController {
   // Admin Login
-  static admin_login = async (
-    req: Request,
-    res: Response
-  ): Promise<Response> => {
+  static admin_login = async (req: Request, res: Response) => {
     const { email, password } = req.body;
     try {
       const admin = await AdminModel.findOne({ email }).collation({
@@ -25,7 +22,7 @@ export default class authController {
         if (await argon2.verify(admin.password, password)) {
           // generate cookie
           const accessToken = createToken({
-            id: admin.toJSON().id,
+            id: (admin.toJSON() as unknown as { id: string }).id,
             email,
             role: RoleEnum.Admin,
           });
@@ -71,7 +68,7 @@ export default class authController {
 
       // TODO: you might want to create seller_customer schema. See video 190
       const accessToken = createToken({
-        id: returnedSeller.toJSON().id,
+        id: (returnedSeller.toJSON() as unknown as { id: string }).id,
         email,
         role: RoleEnum.Seller,
       }); // the reason to include id and role is to ensure a unique token for each user
@@ -129,7 +126,13 @@ export default class authController {
         });
 
         if (admin) {
-          const { password, createdAt, updatedAt, ...rest } = admin.toJSON();
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          const { password, createdAt, updatedAt, ...rest } =
+            admin.toJSON() as unknown as {
+              createdAt: Date;
+              updatedAt: Date;
+              password: string;
+            };
           return apiReponse(res, 200, {
             userInfo: rest,
             role: RoleEnum.Admin,
@@ -144,6 +147,7 @@ export default class authController {
         });
 
         if (seller) {
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
           const { password, createdAt, updatedAt, ...rest } = seller.toJSON();
           return apiReponse(res, 200, {
             userInfo: rest,
