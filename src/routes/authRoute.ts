@@ -3,6 +3,7 @@ import authController from "@/controllers/authController";
 import authMiddleware from "@/middlewares/authMiddleware";
 
 const router = express.Router();
+// TODO:[2] move them to graphql
 
 // Admin Login
 router.post("/admin-login", authController.admin_login);
@@ -17,6 +18,6 @@ router.post("/seller-login", authController.seller_login);
 // router.get("/get-user", authMiddleware, authController.get_user);
 
 // Log Out
-router.post("/logout", authMiddleware, authController.logout);
+// router.post("/logout", authMiddleware, authController.logout);
 
 export default router;

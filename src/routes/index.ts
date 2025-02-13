@@ -1,4 +1,4 @@
-import express from "express";
+import express, { Response } from "express";
 import authRoutes from "@/routes/authRoute";
 import { expressMiddleware } from "@apollo/server/express4";
 import { gqlServer } from "./graphqlRoute";
@@ -20,11 +20,17 @@ async function initializeGraphQL() {
     authMiddleware,
     expressMiddleware(gqlServer, {
       // add to context param in resolvers
-      context: async ({ req }: { req: AuthenticatedRequest }) => {
+      context: async ({
+        req,
+        res,
+      }: {
+        req: AuthenticatedRequest;
+        res: Response;
+      }) => {
         const role = req.role!;
         const email = req.email!;
         const id = req.id!;
-        return { id, role, email };
+        return { id, role, email, res };
       },
     })
   );

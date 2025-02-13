@@ -7,6 +7,7 @@ import {
 import { resolversProduct, typeDefProduct } from "@/routes/graphql/productGql";
 import { resolversSeller, typeDefSeller } from "@/routes/graphql/sellerGql";
 import { resolversAdmin, typeDefAdmin } from "@/routes/graphql/adminGql";
+import { resolversAuth, typeDefAuth } from "./graphql/authGql";
 
 const typeDefQuery = `
   type Query {
@@ -25,14 +26,16 @@ export const gqlServer = new ApolloServer({
     typeDefProduct,
     typeDefSeller,
     typeDefAdmin,
+    typeDefAuth,
   ],
   resolvers: [
     resolversCategory,
     resolversProduct,
     resolversSeller,
     resolversAdmin,
+    resolversAuth,
   ],
-  csrfPrevention: true, // TODO: still not recommended: https://www.apollographql.com/blog/file-upload-best-practices
+  csrfPrevention: true, // TODO:[1] still not recommended: https://www.apollographql.com/blog/file-upload-best-practices
   cache: "bounded", // TODO: what does this mean?
   formatError: (error) => {
     console.log(error);

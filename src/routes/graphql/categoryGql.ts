@@ -44,12 +44,11 @@ export const resolversCategory = {
   Query: {
     getAllCategories: async (
       _: unknown,
-      __: void,
-
-      { role }: { role: RoleEnum }
+      __: void
+      // { role }: { role: RoleEnum }
     ) => {
       try {
-        checkRole(role, [RoleEnum.Admin]);
+        // checkRole(role, [RoleEnum.Admin]);
         const allCategories = await CategoryModel.find();
         return allCategories;
       } catch (e) {

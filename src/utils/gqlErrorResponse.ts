@@ -34,6 +34,10 @@ export const gql_custom_code_forbidden = {
   code: "Forbidden Resource",
   httpStatus: 403,
 };
+export const gql_custom_code_unauthorized = {
+  code: "User Unauthorized",
+  httpStatus: 401,
+};
 
 /**
  * Checker Functions
@@ -48,18 +52,23 @@ export function checkIdMongooseValid(id: string) {
 }
 
 // Check if fields are empty
-export function checkEmptyFields(fieldArray: object) {
-  Object.entries(fieldArray).forEach(([key, value]) => {
-    if (!value) {
-      throw new GraphQLError(`The field ${key} is not provided.`, {
-        extensions: gql_custom_code_bad_user_input,
-      });
-    }
-  });
-}
+// export function checkEmptyFields(fieldArray: object) {
+//   Object.entries(fieldArray).forEach(([key, value]) => {
+//     if (!value) {
+//       throw new GraphQLError(`The field ${key} is not provided.`, {
+//         extensions: gql_custom_code_bad_user_input,
+//       });
+//     }
+//   });
+// }
 
 // Check if role is correct
 export function checkRole(userRole: RoleEnum, requiredRoles: RoleEnum[]) {
+  if (!userRole) {
+    throw new GraphQLError(`The user is not authorized.`, {
+      extensions: gql_custom_code_unauthorized,
+    });
+  }
   if (!requiredRoles.includes(userRole)) {
     throw new GraphQLError(`The user has no access to the resource.`, {
       extensions: gql_custom_code_forbidden,

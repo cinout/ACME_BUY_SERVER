@@ -16,11 +16,13 @@ async function authMiddleware(
 ) {
   const accessToken = req.cookies.accessToken;
 
-  if (!accessToken) {
-    return apiReponse(res, 401, {
-      error: "Authentication failed. Please login again.",
-    });
-  } else {
+  // if (!accessToken) {
+  //   return apiReponse(res, 401, {
+  //     error: "Authentication failed. Please login again.",
+  //   });
+  // } else
+
+  if (accessToken) {
     try {
       const tokenDecoded = jwt.verify(
         accessToken,

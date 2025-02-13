@@ -163,16 +163,16 @@ export default class authController {
     }
   };
 
-  static logout = async (req: AuthenticatedRequest, res: Response) => {
-    try {
-      res.clearCookie("accessToken", {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "strict" as const,
-      });
-      return apiReponse(res, 200, { message: "Loggout successfully." });
-    } catch (e) {
-      return apiReponseGeneralError(res, e as Error);
-    }
-  };
+  // static logout = async (req: AuthenticatedRequest, res: Response) => {
+  //   try {
+  //     res.clearCookie("accessToken", {
+  //       httpOnly: true,
+  //       secure: process.env.NODE_ENV === "production",
+  //       sameSite: "strict" as const,
+  //     });
+  //     return apiReponse(res, 200, { message: "Loggout successfully." });
+  //   } catch (e) {
+  //     return apiReponseGeneralError(res, e as Error);
+  //   }
+  // };
 }
