@@ -1,6 +1,6 @@
 import { Schema, model } from "mongoose";
 
-const categorySchema = new Schema(
+const genreSchema = new Schema(
   {
     // Required
     name: { type: String, required: true },
@@ -10,13 +10,13 @@ const categorySchema = new Schema(
   { timestamps: true }
 );
 
-categorySchema.index(
+genreSchema.index(
   { name: 1 },
   { collation: { locale: "en", strength: 2 }, unique: true }
 ); // be case insensitive
 
 // Transform _id to id
-categorySchema.set("toJSON", {
+genreSchema.set("toJSON", {
   virtuals: true,
   transform: (doc, ret) => {
     ret.id = ret._id.toString();
@@ -25,5 +25,5 @@ categorySchema.set("toJSON", {
   },
 });
 
-const Category = model("Category", categorySchema);
-export default Category;
+const Genre = model("Genre", genreSchema);
+export default Genre;

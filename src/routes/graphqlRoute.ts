@@ -1,9 +1,6 @@
 import { ApolloServer } from "@apollo/server";
 import { ApolloServerErrorCode } from "@apollo/server/errors";
-import {
-  resolversCategory,
-  typeDefCategory,
-} from "@/routes/graphql/categoryGql";
+import { resolversGenre, typeDefGenre } from "@/routes/graphql/genreGql";
 import { resolversProduct, typeDefProduct } from "@/routes/graphql/productGql";
 import { resolversSeller, typeDefSeller } from "@/routes/graphql/sellerGql";
 import { resolversAdmin, typeDefAdmin } from "@/routes/graphql/adminGql";
@@ -22,14 +19,14 @@ const typeDefQuery = `
 export const gqlServer = new ApolloServer({
   typeDefs: [
     typeDefQuery,
-    typeDefCategory,
+    typeDefGenre,
     typeDefProduct,
     typeDefSeller,
     typeDefAdmin,
     typeDefAuth,
   ],
   resolvers: [
-    resolversCategory,
+    resolversGenre,
     resolversProduct,
     resolversSeller,
     resolversAdmin,

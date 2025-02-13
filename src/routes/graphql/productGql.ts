@@ -23,7 +23,7 @@ export const typeDefProduct = `
     updatedAt: Date!
     name: String!
     brand: String!
-    categoryId: ID!
+    genreId: ID!
     sellerId: ID!
     stock: Int!
     price: Float!
@@ -37,7 +37,7 @@ export const typeDefProduct = `
     name: String
     brand: String
     images: [ImageWithID!]
-    categoryId: ID
+    genreId: ID
     stock: Int
     price: Float
     discount: Float
@@ -50,7 +50,7 @@ export const typeDefProduct = `
   }  
 
   extend type Mutation {
-    createProduct(name: String!, brand: String!, images: [ImageWithID!]!, categoryId: ID!, stock: Int!, price: Float!, discount: Float!, description: String): Product!
+    createProduct(name: String!, brand: String!, images: [ImageWithID!]!, genreId: ID!, stock: Int!, price: Float!, discount: Float!, description: String): Product!
 
     updateProduct(id: ID!, input: UpdateProductInput!): Product!
     
@@ -84,7 +84,7 @@ export const resolversProduct = {
         discount,
         brand,
         description,
-        categoryId,
+        genreId,
         stock,
       }: {
         name: string;
@@ -97,7 +97,7 @@ export const resolversProduct = {
         discount: number;
         brand: string;
         description: string;
-        categoryId: string;
+        genreId: string;
         stock: number;
       },
       { id, role }: { id: string; role: RoleEnum }
@@ -112,7 +112,7 @@ export const resolversProduct = {
           discount,
           brand,
           description,
-          categoryId,
+          genreId,
           sellerId: id,
           stock,
           images: uploadResult,
@@ -143,7 +143,7 @@ export const resolversProduct = {
         // discount: number;
         // brand: string;
         // description: string;
-        // categoryId: string;
+        // genreId: string;
         // stock: number;
       },
       { id: tokenId, role }: { id: string; role: RoleEnum }

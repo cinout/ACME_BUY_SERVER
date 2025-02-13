@@ -45,7 +45,7 @@ export const gql_custom_code_unauthorized = {
 // Check if id is a valid Mongoose ID
 export function checkIdMongooseValid(id: string) {
   if (!mongoose.Types.ObjectId.isValid(id)) {
-    throw new GraphQLError(`The category is invalid.`, {
+    throw new GraphQLError(`The genre is invalid.`, {
       extensions: gql_custom_code_bad_user_input,
     });
   }

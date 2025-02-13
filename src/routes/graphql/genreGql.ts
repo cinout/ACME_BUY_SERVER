@@ -1,4 +1,4 @@
-import CategoryModel from "@/models/CategoryModel";
+import GenreModel from "@/models/GenreModel";
 import {
   checkIdMongooseValid,
   checkInputUpdateIsEmpty,
@@ -11,16 +11,16 @@ import { uploadImage } from "@/utils/imageUpload";
 import { RoleEnum } from "@/utils/enums";
 import { FileUpload } from "graphql-upload/processRequest.mjs";
 
-export const typeDefCategory = `
+export const typeDefGenre = `
   scalar Upload
   scalar Date
 
-  input UpdateCategoryInput {
+  input UpdateGenreInput {
     name: String
     image: Upload
   }
 
-  type Category {
+  type Genre {
     id: ID!
     createdAt: Date!
     updatedAt: Date!
@@ -30,34 +30,34 @@ export const typeDefCategory = `
   }
 
   extend type Query {
-    getAllCategories: [Category!]!
+    getAllGenres: [Genre!]!
   }  
 
   extend type Mutation {
-    createCategory(name: String!, image: Upload!): Category!
-    updateCategory(id: ID!, input: UpdateCategoryInput!): Category!
-    deleteCategory(id: ID!): String
+    createGenre(name: String!, image: Upload!): Genre!
+    updateGenre(id: ID!, input: UpdateGenreInput!): Genre!
+    deleteGenre(id: ID!): String
   }  
 `;
 
-export const resolversCategory = {
+export const resolversGenre = {
   Query: {
-    getAllCategories: async (
+    getAllGenres: async (
       _: unknown,
       __: void
       // { role }: { role: RoleEnum }
     ) => {
       try {
         // checkRole(role, [RoleEnum.Admin]);
-        const allCategories = await CategoryModel.find();
-        return allCategories;
+        const allGenres = await GenreModel.find();
+        return allGenres;
       } catch (e) {
         gqlGenericError(e as Error);
       }
     },
   },
   Mutation: {
-    createCategory: async (
+    createGenre: async (
       _: unknown,
       {
         name,
@@ -71,30 +71,27 @@ export const resolversCategory = {
       try {
         checkRole(role, [RoleEnum.Admin]);
 
-        const existingCategory = await CategoryModel.findOne({ name });
+        const existingGenre = await GenreModel.findOne({ name });
 
-        if (existingCategory) {
-          throw new GraphQLError(
-            `The category name '${name}' already exists.`,
-            {
-              extensions: gql_custom_code_bad_user_input,
-            }
-          );
+        if (existingGenre) {
+          throw new GraphQLError(`The genre name '${name}' already exists.`, {
+            extensions: gql_custom_code_bad_user_input,
+          });
         }
 
-        const uploadResult = await uploadImage(image, "Category");
+        const uploadResult = await uploadImage(image, "Genre");
 
-        const newCategory = await CategoryModel.create({
+        const newGenre = await GenreModel.create({
           name,
           ...uploadResult,
         });
 
-        return newCategory;
+        return newGenre;
       } catch (e) {
         gqlGenericError(e as Error);
       }
     },
-    updateCategory: async (
+    updateGenre: async (
       _: unknown,
       {
         id,
@@ -114,20 +111,19 @@ export const resolversCategory = {
         checkInputUpdateIsEmpty(input);
 
         if (input.image) {
-          const uploadResult = await uploadImage(input.image, "Category");
+          const uploadResult = await uploadImage(input.image, "Genre");
           // eslint-disable-next-line @typescript-eslint/no-unused-vars
           const { image, ...rest } = input;
           input = { ...rest, ...uploadResult };
         }
 
-        const result = await CategoryModel.findOneAndUpdate(
-          { _id: id },
-          input,
-          { runValidators: true, new: true }
-        );
+        const result = await GenreModel.findOneAndUpdate({ _id: id }, input, {
+          runValidators: true,
+          new: true,
+        });
 
         if (!result) {
-          throw new GraphQLError(`The category does not exist.`, {
+          throw new GraphQLError(`The genre does not exist.`, {
             extensions: gql_custom_code_bad_user_input,
           });
         } else {
@@ -137,7 +133,7 @@ export const resolversCategory = {
         gqlGenericError(e as Error);
       }
     },
-    deleteCategory: async (
+    deleteGenre: async (
       _: unknown,
       { id }: { id: string },
       { role }: { role: RoleEnum }
@@ -145,9 +141,9 @@ export const resolversCategory = {
       try {
         checkRole(role, [RoleEnum.Admin]);
         checkIdMongooseValid(id);
-        const result = await CategoryModel.deleteOne({ _id: id });
+        const result = await GenreModel.deleteOne({ _id: id });
         if (result.deletedCount === 0) {
-          throw new GraphQLError(`The category does not exist.`, {
+          throw new GraphQLError(`The genre does not exist.`, {
             extensions: gql_custom_code_bad_user_input,
           });
         } else {

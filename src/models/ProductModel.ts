@@ -6,10 +6,10 @@ const productSchema = new Schema(
     // Required
     name: { type: String, required: true },
     brand: { type: String, required: true },
-    categoryId: {
+    genreId: {
       type: Schema.Types.ObjectId,
       required: true,
-      ref: "Category",
+      ref: "Genre",
     },
     sellerId: {
       type: Schema.Types.ObjectId,
