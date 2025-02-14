@@ -13,20 +13,12 @@ const sellerSchema = new Schema(
 
     status: {
       type: String,
-      enum: [
-        SellerStatusEnum.Active,
-        SellerStatusEnum.Deactivated,
-        SellerStatusEnum.Pending,
-      ],
+      enum: Object.values(SellerStatusEnum),
       required: true,
     },
     signupMethod: {
       type: String,
-      enum: [
-        SellerSignupMethodEnum.Default,
-        SellerSignupMethodEnum.Facebook,
-        SellerSignupMethodEnum.Google,
-      ],
+      enum: Object.values(SellerSignupMethodEnum),
       required: true,
     },
     imageUrl: { type: String, required: true },

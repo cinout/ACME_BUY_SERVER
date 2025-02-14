@@ -22,7 +22,11 @@ export const typeDefProduct = `
     createdAt: Date!
     updatedAt: Date!
     name: String!
-    brand: String!
+    artist: String!
+    year: Int!
+    format: String!
+    grading: String!
+    region: String!
     genreId: ID!
     sellerId: ID!
     stock: Int!
@@ -35,7 +39,11 @@ export const typeDefProduct = `
 
   input UpdateProductInput {
     name: String
-    brand: String
+    artist: String
+    year: Int
+    format: String
+    grading: String
+    region: String
     images: [ImageWithID!]
     genreId: ID
     stock: Int
@@ -50,7 +58,7 @@ export const typeDefProduct = `
   }  
 
   extend type Mutation {
-    createProduct(name: String!, brand: String!, images: [ImageWithID!]!, genreId: ID!, stock: Int!, price: Float!, discount: Float!, description: String): Product!
+    createProduct(name: String!, artist: String!, year: Int!, format: String!, grading: String!, region: String!, images: [ImageWithID!]!, genreId: ID!, stock: Int!, price: Float!, discount: Float!, description: String): Product!
 
     updateProduct(id: ID!, input: UpdateProductInput!): Product!
     
@@ -82,7 +90,11 @@ export const resolversProduct = {
         images,
         price,
         discount,
-        brand,
+        artist,
+        year,
+        format,
+        grading,
+        region,
         description,
         genreId,
         stock,
@@ -95,10 +107,14 @@ export const resolversProduct = {
         }[];
         price: number;
         discount: number;
-        brand: string;
+        artist: string;
         description: string;
         genreId: string;
         stock: number;
+        year: number;
+        format: string;
+        grading: string;
+        region: string;
       },
       { id, role }: { id: string; role: RoleEnum }
     ) => {
@@ -110,14 +126,17 @@ export const resolversProduct = {
           name,
           price,
           discount,
-          brand,
+          artist,
           description,
           genreId,
           sellerId: id,
           stock,
           images: uploadResult,
+          year,
+          format,
+          grading,
+          region,
         });
-
         return newProduct;
       } catch (e) {
         gqlGenericError(e as Error);
@@ -137,14 +156,6 @@ export const resolversProduct = {
             name: string;
           }[];
         };
-        // name: string;
-        // images: { id: string; file: any; name: string }[];
-        // price: number;
-        // discount: number;
-        // brand: string;
-        // description: string;
-        // genreId: string;
-        // stock: number;
       },
       { id: tokenId, role }: { id: string; role: RoleEnum }
     ) => {

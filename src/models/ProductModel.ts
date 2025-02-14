@@ -1,3 +1,4 @@
+import { GradingEnum, MediaFormatEnum, ReleaseRegionEnum } from "@/utils/enums";
 import { Schema, model } from "mongoose";
 
 // TODO: how to add FK constraints?
@@ -5,7 +6,25 @@ const productSchema = new Schema(
   {
     // Required
     name: { type: String, required: true },
-    brand: { type: String, required: true },
+    artist: { type: String, required: true },
+
+    year: { type: Number, required: true },
+    format: {
+      type: String,
+      enum: Object.values(MediaFormatEnum),
+      required: true,
+    },
+    grading: {
+      type: String,
+      enum: Object.values(GradingEnum),
+      required: true,
+    },
+    region: {
+      type: String,
+      enum: Object.values(ReleaseRegionEnum),
+      required: true,
+    },
+
     genreId: {
       type: Schema.Types.ObjectId,
       required: true,
