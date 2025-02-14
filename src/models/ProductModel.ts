@@ -7,8 +7,8 @@ const productSchema = new Schema(
     // Required
     name: { type: String, required: true },
     artist: { type: String, required: true },
-
     year: { type: Number, required: true },
+
     format: {
       type: String,
       enum: Object.values(MediaFormatEnum),

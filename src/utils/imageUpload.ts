@@ -1,6 +1,6 @@
 import { FileUpload } from "graphql-upload/processRequest.mjs";
 import cloudinary from "./cloudConfig";
-import { randomDefaultImage } from "./removeLater";
+import { randomDefaultImage } from "./imageSamples";
 
 export async function uploadImage(
   image: { name: string; file: string | { file: FileUpload } },

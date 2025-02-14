@@ -3,8 +3,9 @@ import "dotenv/config";
 import routes from "@/routes/index";
 import cors from "cors";
 import cookieParser from "cookie-parser";
-import connectDB from "@/utils/db";
+import connectDB from "@/db";
 import graphqlUploadExpress from "graphql-upload/graphqlUploadExpress.mjs";
+import { getAlbumCover } from "./utils/imageSamples";
 
 // Database Setup
 connectDB(); // TODO: why I don't need to use await? Top-level 'await' expressions are only allowed when the 'module' option is set to 'es2022', 'esnext', 'system', 'node16', 'nodenext', or 'preserve', and the 'target' option is set to 'es2017' or higher
@@ -25,6 +26,8 @@ app.use(graphqlUploadExpress()); // Apply the GraphQL upload middleware before y
 
 // Routing
 app.use("/api", routes);
+
+// getAlbumCover(400);
 
 // Listening
 const port = process.env.SERVER_PORT;

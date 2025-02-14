@@ -30,7 +30,7 @@ Backend code for ACME BUY
 
 ## 🏋️‍♀️ Challenges Faced
 
-- ...
+- Get data from public API and populate database with data: https://coverartarchive.org/, https://musicbrainz.org/doc/Cover_Art_Archive/API
 
 ## 🏋️‍♀️ Attetion to Details
 

@@ -6,7 +6,7 @@ import argon2 from "argon2";
 import createToken, { cookieOptions } from "@/utils/createToken";
 import { AuthenticatedRequest } from "@/middlewares/authMiddleware";
 import { RoleEnum, SellerStatusEnum } from "@/utils/enums";
-import { randomDefaultImage } from "@/utils/removeLater";
+import { randomDefaultImage } from "@/utils/imageSamples";
 
 export default class authController {
   // Admin Login

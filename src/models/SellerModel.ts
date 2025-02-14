@@ -21,9 +21,9 @@ const sellerSchema = new Schema(
       enum: Object.values(SellerSignupMethodEnum),
       required: true,
     },
+    shopName: { type: String, required: true },
     imageUrl: { type: String, required: true },
     imageName: { type: String, required: true },
-    shopName: { type: String, required: true },
 
     // Optional
     country: { type: String },
