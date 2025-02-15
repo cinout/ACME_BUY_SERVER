@@ -10,7 +10,6 @@ const sellerSchema = new Schema(
     lastname: { type: String, required: true },
     email: { type: String, required: true },
     password: { type: String, required: true },
-
     status: {
       type: String,
       enum: Object.values(SellerStatusEnum),
@@ -21,11 +20,11 @@ const sellerSchema = new Schema(
       enum: Object.values(SellerSignupMethodEnum),
       required: true,
     },
-    shopName: { type: String, required: true },
     imageUrl: { type: String, required: true },
     imageName: { type: String, required: true },
 
     // Optional
+    shopName: { type: String, required: true },
     country: { type: String },
     state: { type: String },
     city: { type: String },

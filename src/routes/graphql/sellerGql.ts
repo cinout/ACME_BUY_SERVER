@@ -95,7 +95,7 @@ export const resolversSeller = {
       { role }: { role: RoleEnum }
     ) => {
       try {
-        checkRole(role, [RoleEnum.Admin]);
+        checkRole(role, [RoleEnum.Admin]); // TODO:[1] see if you need to update
         const seller = await SellerModel.find();
         return seller;
       } catch (e) {

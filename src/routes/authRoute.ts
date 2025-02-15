@@ -5,9 +5,6 @@ import authMiddleware from "@/middlewares/authMiddleware";
 const router = express.Router();
 // TODO:[2] move them to graphql
 
-// Admin Login
-router.post("/admin-login", authController.admin_login);
-
 // Seller Signup
 router.post("/seller-signup", authController.seller_signup);
 

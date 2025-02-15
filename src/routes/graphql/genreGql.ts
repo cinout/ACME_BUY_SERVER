@@ -42,13 +42,8 @@ export const typeDefGenre = `
 
 export const resolversGenre = {
   Query: {
-    getAllGenres: async (
-      _: unknown,
-      __: void
-      // { role }: { role: RoleEnum }
-    ) => {
+    getAllGenres: async (_: unknown, __: void) => {
       try {
-        // checkRole(role, [RoleEnum.Admin]);
         const allGenres = await GenreModel.find();
         return allGenres;
       } catch (e) {

@@ -3,7 +3,7 @@ import { ApolloServerErrorCode } from "@apollo/server/errors";
 import { resolversGenre, typeDefGenre } from "@/routes/graphql/genreGql";
 import { resolversProduct, typeDefProduct } from "@/routes/graphql/productGql";
 import { resolversSeller, typeDefSeller } from "@/routes/graphql/sellerGql";
-import { resolversAdmin, typeDefAdmin } from "@/routes/graphql/adminGql";
+// import { resolversAdmin, typeDefAdmin } from "@/routes/graphql/adminGql";
 import { resolversAuth, typeDefAuth } from "./graphql/authGql";
 
 const typeDefQuery = `
@@ -22,16 +22,9 @@ export const gqlServer = new ApolloServer({
     typeDefGenre,
     typeDefProduct,
     typeDefSeller,
-    typeDefAdmin,
     typeDefAuth,
   ],
-  resolvers: [
-    resolversGenre,
-    resolversProduct,
-    resolversSeller,
-    resolversAdmin,
-    resolversAuth,
-  ],
+  resolvers: [resolversGenre, resolversProduct, resolversSeller, resolversAuth],
   csrfPrevention: true, // TODO:[1] still not recommended: https://www.apollographql.com/blog/file-upload-best-practices
   cache: "bounded", // TODO: what does this mean?
   formatError: (error) => {

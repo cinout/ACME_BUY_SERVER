@@ -1,5 +1,4 @@
 import { Request, Response } from "express";
-import AdminModel from "@/models/AdminModel";
 import SellerModel from "@/models/SellerModel";
 import { apiReponse, apiReponseGeneralError } from "@/utils/apiReponse";
 import argon2 from "argon2";
@@ -9,39 +8,6 @@ import { RoleEnum, SellerStatusEnum } from "@/utils/enums";
 import { randomDefaultImage } from "@/utils/imageSamples";
 
 export default class authController {
-  // Admin Login
-  static admin_login = async (req: Request, res: Response) => {
-    const { email, password } = req.body;
-    try {
-      const admin = await AdminModel.findOne({ email }).collation({
-        locale: "en",
-        strength: 2,
-      });
-
-      if (admin) {
-        if (await argon2.verify(admin.password, password)) {
-          // generate cookie
-          const accessToken = createToken({
-            id: (admin.toJSON() as unknown as { id: string }).id,
-            email,
-            role: RoleEnum.Admin,
-          });
-          res.cookie("accessToken", accessToken, cookieOptions);
-          return apiReponse(res, 200, {
-            message: "Login success.",
-            accessToken, // TODO: remove accessToken later, not recommended
-          });
-        } else {
-          return apiReponse(res, 404, { error: "Password does not match." });
-        }
-      } else {
-        return apiReponse(res, 404, { error: "Email not found." });
-      }
-    } catch (e) {
-      return apiReponseGeneralError(res, e as Error);
-    }
-  };
-
   // Seller Signup
   static seller_signup = async (req: Request, res: Response) => {
     const { firstname, lastname, email, password, signupMethod, shopName } =
@@ -116,63 +82,26 @@ export default class authController {
   };
 
   static get_user = async (req: AuthenticatedRequest, res: Response) => {
-    const { email, role } = req; // get from middleware
+    const { email } = req; // get from middleware
 
     try {
-      if (role === RoleEnum.Admin) {
-        const admin = await AdminModel.findOne({ email }).collation({
-          locale: "en",
-          strength: 2,
-        });
+      const seller = await SellerModel.findOne({ email }).collation({
+        locale: "en",
+        strength: 2,
+      });
 
-        if (admin) {
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
-          const { password, createdAt, updatedAt, ...rest } =
-            admin.toJSON() as unknown as {
-              createdAt: Date;
-              updatedAt: Date;
-              password: string;
-            };
-          return apiReponse(res, 200, {
-            userInfo: rest,
-            role: RoleEnum.Admin,
-          });
-        } else {
-          apiReponse(res, 404, { message: "User not found." });
-        }
-      } else if (role === RoleEnum.Seller) {
-        const seller = await SellerModel.findOne({ email }).collation({
-          locale: "en",
-          strength: 2,
+      if (seller) {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { password, createdAt, updatedAt, ...rest } = seller.toJSON();
+        return apiReponse(res, 200, {
+          userInfo: rest,
+          role: RoleEnum.Seller,
         });
-
-        if (seller) {
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
-          const { password, createdAt, updatedAt, ...rest } = seller.toJSON();
-          return apiReponse(res, 200, {
-            userInfo: rest,
-            role: RoleEnum.Seller,
-          });
-        } else {
-          apiReponse(res, 404, { message: "User not found." });
-        }
+      } else {
+        apiReponse(res, 404, { message: "User not found." });
       }
-      // TODO: customer role
     } catch (e) {
       return apiReponseGeneralError(res, e as Error);
     }
   };
-
-  // static logout = async (req: AuthenticatedRequest, res: Response) => {
-  //   try {
-  //     res.clearCookie("accessToken", {
-  //       httpOnly: true,
-  //       secure: process.env.NODE_ENV === "production",
-  //       sameSite: "strict" as const,
-  //     });
-  //     return apiReponse(res, 200, { message: "Loggout successfully." });
-  //   } catch (e) {
-  //     return apiReponseGeneralError(res, e as Error);
-  //   }
-  // };
 }
