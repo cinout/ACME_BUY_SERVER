@@ -1,32 +1,37 @@
-import { RoleEnum, SellerStatusEnum } from "@/utils/enums";
+import { RoleEnum, UserStatusEnum } from "@/utils/enums";
 import {
   checkInputUpdateIsEmpty,
   checkRole,
   gql_custom_code_bad_user_input,
   gqlGenericError,
 } from "@/utils/gqlErrorResponse";
-import SellerModel from "@/models/SellerModel";
+import UserModel from "@/models/UserModel";
 import { GraphQLError } from "graphql";
 import { uploadImage } from "@/utils/imageUpload";
 import { FileUpload } from "graphql-upload/processRequest.mjs";
 
-export const typeDefSeller = `
+export const typeDefUser = `
   scalar Upload
   scalar Date
 
-  enum SellerStatusEnum {
+  enum UserStatusEnum {
     Pending
     Deactivated
     Active
   }
 
-  enum SellerSignupMethodEnum {
+  enum UserSignupMethodEnum {
     Default
     Google
     Facebook
   }
 
-  type Seller {
+  enum RoleEnum {
+    User
+    Admin
+  }
+
+  type User {
     id: ID!
     createdAt: Date!
     updatedAt: Date!
@@ -34,9 +39,10 @@ export const typeDefSeller = `
     lastname: String!
     email: String!
     password: String!
-    status: SellerStatusEnum!
-    signupMethod: SellerSignupMethodEnum!
-    shopName: String!
+    status: UserStatusEnum!
+    signupMethod: UserSignupMethodEnum!
+    role: RoleEnum!
+    shopName: String
     country: String
     state: String
     city: String
@@ -45,7 +51,7 @@ export const typeDefSeller = `
     imageName: String!
   }
 
-  input UpdateSellerInput {
+  input UpdateUserInput {
     firstname: String
     lastname: String
     password: String
@@ -58,30 +64,30 @@ export const typeDefSeller = `
   }
 
   extend type Query {
-    getCurrentSeller: Seller!
-    getAllSellers: [Seller!]!
+    getCurrentUser: User!
+    getAllUsers: [User!]!
   }
   
   extend type Mutation {
-    updateCurrentSeller(input: UpdateSellerInput!): Seller!
-    updateSellerStatusByAdmin(id: ID!, status: SellerStatusEnum!): Seller!
+    updateCurrentUser(input: UpdateUserInput!): User!
+    updateUserStatusByAdmin(id: ID!, status: UserStatusEnum!): User!
   }
 `;
 
-export const resolversSeller = {
+export const resolversUser = {
   Query: {
-    getCurrentSeller: async (
+    getCurrentUser: async (
       _: unknown,
       __: void,
       { id, role }: { id: string; role: RoleEnum }
     ) => {
       try {
-        checkRole(role, [RoleEnum.Seller]);
-        const seller = await SellerModel.findById(id);
-        if (seller) {
-          return seller;
+        checkRole(role, [RoleEnum.User, RoleEnum.Admin]);
+        const user = await UserModel.findById(id);
+        if (user) {
+          return user;
         } else {
-          throw new GraphQLError(`The seller does not exist.`, {
+          throw new GraphQLError(`The user does not exist.`, {
             extensions: gql_custom_code_bad_user_input,
           });
         }
@@ -89,22 +95,18 @@ export const resolversSeller = {
         gqlGenericError(e as Error);
       }
     },
-    getAllSellers: async (
-      _: unknown,
-      args: void,
-      { role }: { role: RoleEnum }
-    ) => {
+    getAllUsers: async (_: unknown, __: void, { role }: { role: RoleEnum }) => {
       try {
         checkRole(role, [RoleEnum.Admin]); // TODO:[1] see if you need to update
-        const seller = await SellerModel.find();
-        return seller;
+        const users = await UserModel.find({ role: RoleEnum.User });
+        return users;
       } catch (e) {
         gqlGenericError(e as Error);
       }
     },
   },
   Mutation: {
-    updateCurrentSeller: async (
+    updateCurrentUser: async (
       _: unknown,
       {
         input,
@@ -117,22 +119,22 @@ export const resolversSeller = {
       { id, role }: { id: string; role: RoleEnum }
     ) => {
       try {
-        checkRole(role, [RoleEnum.Seller]);
+        checkRole(role, [RoleEnum.User]);
         checkInputUpdateIsEmpty(input);
 
         if (input.image) {
-          const uploadResult = await uploadImage(input.image, "Seller");
+          const uploadResult = await uploadImage(input.image, "User");
           const { image, ...rest } = input;
           input = { ...rest, ...uploadResult };
         }
 
-        const result = await SellerModel.findOneAndUpdate({ _id: id }, input, {
+        const result = await UserModel.findOneAndUpdate({ _id: id }, input, {
           runValidators: true,
           new: true,
         });
 
         if (!result) {
-          throw new GraphQLError(`The seller does not exist.`, {
+          throw new GraphQLError(`The user does not exist.`, {
             extensions: gql_custom_code_bad_user_input,
           });
         } else {
@@ -142,16 +144,16 @@ export const resolversSeller = {
         gqlGenericError(e as Error);
       }
     },
-    updateSellerStatusByAdmin: async (
+    updateUserStatusByAdmin: async (
       _: unknown,
-      { id: sellerId, status }: { id: string; status: SellerStatusEnum },
+      { id: userId, status }: { id: string; status: UserStatusEnum },
       { role }: { role: RoleEnum }
     ) => {
       try {
         checkRole(role, [RoleEnum.Admin]);
 
-        const result = await SellerModel.findOneAndUpdate(
-          { _id: sellerId },
+        const result = await UserModel.findOneAndUpdate(
+          { _id: userId },
           { status },
           {
             runValidators: true,
@@ -160,7 +162,7 @@ export const resolversSeller = {
         );
 
         if (!result) {
-          throw new GraphQLError(`The seller does not exist.`, {
+          throw new GraphQLError(`The user does not exist.`, {
             extensions: gql_custom_code_bad_user_input,
           });
         } else {

@@ -30,10 +30,10 @@ const productSchema = new Schema(
       required: true,
       ref: "Genre",
     },
-    sellerId: {
+    userId: {
       type: Schema.Types.ObjectId,
       required: true,
-      ref: "Seller",
+      ref: "User",
     },
     stock: { type: Number, required: true },
     price: { type: Number, required: true },

@@ -18,7 +18,7 @@ export const resolversAuth = {
       { res, role }: { role: RoleEnum; res: Response }
     ) => {
       try {
-        checkRole(role, [RoleEnum.Admin, RoleEnum.Seller]);
+        checkRole(role, [RoleEnum.Admin, RoleEnum.User]);
         res.clearCookie("accessToken", {
           httpOnly: true,
           secure: process.env.NODE_ENV === "production",

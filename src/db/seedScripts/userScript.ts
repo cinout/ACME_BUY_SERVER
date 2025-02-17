@@ -1,20 +1,24 @@
-import SellerModel from "@/models/SellerModel";
+import UserModel from "@/models/UserModel";
 import { selectRandomItemFromArray } from "@/utils/array";
-import { SellerSignupMethodEnum, SellerStatusEnum } from "@/utils/enums";
+import { RoleEnum, UserSignupMethodEnum, UserStatusEnum } from "@/utils/enums";
 import { faker } from "@faker-js/faker";
 import { Country, State, City } from "country-state-city";
 import seedingScriptConnectDB from ".";
+import argon2 from "argon2";
 
 seedingScriptConnectDB();
 
-async function sellerScript() {
+async function userScript() {
   try {
     // Dummy Data
     const password = "12345678";
+    const pwEnc = await argon2.hash(password, {
+      type: argon2.argon2id,
+    });
 
     const allCountries = Country.getAllCountries();
 
-    const sellerStats = Array.from({ length: 100 }, () => {
+    const userStats = Array.from({ length: 50 }, () => {
       const country = selectRandomItemFromArray(allCountries).isoCode;
 
       const allStates = State.getStatesOfCountry(country);
@@ -35,10 +39,10 @@ async function sellerScript() {
         firstname: faker.person.firstName(),
         lastname: faker.person.lastName(),
         email: faker.internet.email(),
-        password: password,
+        password: pwEnc,
 
-        status: SellerStatusEnum.Active,
-        signupMethod: SellerSignupMethodEnum.Default,
+        status: UserStatusEnum.Active,
+        signupMethod: UserSignupMethodEnum.Default,
         shopName: faker.company.name(),
 
         imageUrl: faker.image.personPortrait({ size: 256 }),
@@ -49,17 +53,18 @@ async function sellerScript() {
         city: city,
 
         zipCode: faker.location.zipCode(),
+        role: RoleEnum.User,
       };
     });
 
-    console.log(sellerStats);
+    console.log(userStats[2]);
 
     // Insert
-    await SellerModel.insertMany(sellerStats);
-    console.log("Seller Data are successfully inserted!");
+    await UserModel.insertMany(userStats);
+    console.log("User Data are successfully inserted!");
   } catch (err) {
     console.error("Error while seeding data:", err);
   }
 }
 
-sellerScript();
+userScript();

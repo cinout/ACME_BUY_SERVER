@@ -28,7 +28,7 @@ export const typeDefProduct = `
     grading: String!
     region: String!
     genreId: ID!
-    sellerId: ID!
+    userId: ID!
     stock: Int!
     price: Float!
     discount: Float!
@@ -54,7 +54,8 @@ export const typeDefProduct = `
   }
 
   extend type Query {
-    getAllProductsBySeller: [Product!]!
+    getAllProductsByUser: [Product!]!
+    getNewestProducts(count: Int!): [Product!]!
   }  
 
   extend type Mutation {
@@ -68,14 +69,28 @@ export const typeDefProduct = `
 
 export const resolversProduct = {
   Query: {
-    getAllProductsBySeller: async (
+    getAllProductsByUser: async (
       _: unknown,
       args: void,
       { id, role }: { id: string; role: RoleEnum }
     ) => {
       try {
-        checkRole(role, [RoleEnum.Seller]);
-        const products = await ProductModel.find({ sellerId: id });
+        checkRole(role, [RoleEnum.User]);
+        const products = await ProductModel.find({ userId: id });
+        return products;
+      } catch (e) {
+        gqlGenericError(e as Error);
+      }
+    },
+    getNewestProducts: async (
+      _: unknown,
+      { count }: { count: number },
+      { id, role }: { id: string; role: RoleEnum }
+    ) => {
+      try {
+        const products = await ProductModel.find()
+          .sort("-createdAt")
+          .limit(count);
         return products;
       } catch (e) {
         gqlGenericError(e as Error);
@@ -119,7 +134,7 @@ export const resolversProduct = {
       { id, role }: { id: string; role: RoleEnum }
     ) => {
       try {
-        checkRole(role, [RoleEnum.Seller]);
+        checkRole(role, [RoleEnum.User]);
         const uploadResult = await uploadImages(images, "Products");
 
         const newProduct = await ProductModel.create({
@@ -129,7 +144,7 @@ export const resolversProduct = {
           artist,
           description,
           genreId,
-          sellerId: id,
+          userId: id,
           stock,
           images: uploadResult,
           year,
@@ -160,9 +175,9 @@ export const resolversProduct = {
       { id: tokenId, role }: { id: string; role: RoleEnum }
     ) => {
       try {
-        checkRole(role, [RoleEnum.Seller]);
+        checkRole(role, [RoleEnum.User]);
         checkIdMongooseValid(id);
-        await checkAccessRight(tokenId, ProductModel, id, "sellerId");
+        await checkAccessRight(tokenId, ProductModel, id, "userId");
         checkInputUpdateIsEmpty(input);
 
         if (input.images) {
@@ -192,7 +207,7 @@ export const resolversProduct = {
       { role }: { role: RoleEnum }
     ) => {
       try {
-        checkRole(role, [RoleEnum.Seller]);
+        checkRole(role, [RoleEnum.User]);
         checkIdMongooseValid(id);
 
         const result = await ProductModel.deleteOne({ _id: id });

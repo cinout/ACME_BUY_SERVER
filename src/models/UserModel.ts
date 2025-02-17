@@ -1,9 +1,9 @@
-import { SellerSignupMethodEnum, SellerStatusEnum } from "@/utils/enums";
+import { RoleEnum, UserSignupMethodEnum, UserStatusEnum } from "@/utils/enums";
 import { CallbackError, Schema, model } from "mongoose";
 import argon2 from "argon2";
 
 // TODO: for all models, we also need to add validations that are the same in front-end, to enhance security, especially if APIs are allowed to modify items in backend
-const sellerSchema = new Schema(
+const userSchema = new Schema(
   {
     // Required
     firstname: { type: String, required: true },
@@ -12,19 +12,25 @@ const sellerSchema = new Schema(
     password: { type: String, required: true },
     status: {
       type: String,
-      enum: Object.values(SellerStatusEnum),
+      enum: Object.values(UserStatusEnum),
       required: true,
     },
     signupMethod: {
       type: String,
-      enum: Object.values(SellerSignupMethodEnum),
+      enum: Object.values(UserSignupMethodEnum),
       required: true,
     },
     imageUrl: { type: String, required: true },
     imageName: { type: String, required: true },
+    role: {
+      type: String,
+      enum: Object.values(RoleEnum),
+      required: true,
+      default: RoleEnum.User,
+    },
 
     // Optional
-    shopName: { type: String, required: true },
+    shopName: { type: String },
     country: { type: String },
     state: { type: String },
     city: { type: String },
@@ -33,12 +39,12 @@ const sellerSchema = new Schema(
   { timestamps: true }
 );
 
-sellerSchema.index(
+userSchema.index(
   { email: 1 },
   { collation: { locale: "en", strength: 2 }, unique: true }
 ); // be case insensitive
 
-sellerSchema.pre("save", async function (next) {
+userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next(); // Only hash if password is new or changed
 
   try {
@@ -52,7 +58,7 @@ sellerSchema.pre("save", async function (next) {
 });
 
 // Transform _id to id
-sellerSchema.set("toJSON", {
+userSchema.set("toJSON", {
   virtuals: true,
   transform: (doc, ret) => {
     ret.id = ret._id.toString();
@@ -61,5 +67,5 @@ sellerSchema.set("toJSON", {
   },
 });
 
-const Seller = model("Seller", sellerSchema);
-export default Seller;
+const User = model("User", userSchema);
+export default User;

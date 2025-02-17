@@ -1,10 +1,10 @@
-export enum SellerStatusEnum {
+export enum UserStatusEnum {
   Pending = "Pending",
   Deactivated = "Deactivated",
   Active = "Active",
 }
 
-export enum SellerSignupMethodEnum {
+export enum UserSignupMethodEnum {
   Default = "Default",
   Google = "Google",
   Facebook = "Facebook",
@@ -12,7 +12,7 @@ export enum SellerSignupMethodEnum {
 
 export enum RoleEnum {
   Admin = "Admin",
-  Seller = "Seller",
+  User = "User",
 }
 
 /**

@@ -5,14 +5,11 @@ import authMiddleware from "@/middlewares/authMiddleware";
 const router = express.Router();
 // TODO:[2] move them to graphql
 
-// Seller Signup
-router.post("/seller-signup", authController.seller_signup);
+// User Signup
+router.post("/user-signup", authController.user_signup);
 
-// Seller Login
-router.post("/seller-login", authController.seller_login);
-
-// Get User Info (moved to GQL)
-// router.get("/get-user", authMiddleware, authController.get_user);
+// User Login
+router.post("/user-login", authController.user_login);
 
 // Log Out
 // router.post("/logout", authMiddleware, authController.logout);
