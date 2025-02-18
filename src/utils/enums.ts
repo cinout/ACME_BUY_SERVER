@@ -24,7 +24,9 @@ export enum MediaFormatEnum {
   CD = "CD",
   Digital = "Digital",
   DVD_BlueRay = "DVD & BlueRay",
-  Vinyl = "Vinyl",
+  Vinyl_7 = "7'' Vinyl",
+  Vinyl_10 = "10'' Vinyl",
+  Vinyl_12 = "12'' Vinyl",
   Others = "Others",
 }
 

@@ -5,7 +5,7 @@ import { randomDefaultImage } from "./imageSamples";
 export async function uploadImage(
   image: { name: string; file: string | { file: FileUpload } },
   folder: string
-) {
+): Promise<{ imageUrl: string; imageName: string }> {
   if (typeof image.file === "string") {
     return { imageUrl: image.file, imageName: image.name };
   } else {
@@ -13,21 +13,21 @@ export async function uploadImage(
     const stream = createReadStream();
     return { imageUrl: randomDefaultImage(), imageName: image.name };
 
-    // TODO: remove comment
-    // const uploadResult = await new Promise((resolve, reject) => {
+    // // TODO: remove comment
+    // const uploadResult = (await new Promise((resolve, reject) => {
     //   const uploadStream = cloudinary.uploader.upload_stream(
     //     { folder }, // Optional: specify a folder in your Cloudinary account
     //     (error, result) => {
     //       if (result) {
-    //         resolve({ imageUrl: result.url, imageName: filename });
+    //         resolve({ imageUrl: result.url, imageName: image.name });
     //       } else {
     //         reject(error);
     //       }
     //     }
     //   );
     //   stream.pipe(uploadStream);
-    // });
-    // return uploadResult
+    // })) as { imageUrl: string; imageName: string };
+    // return uploadResult;
   }
 }
 

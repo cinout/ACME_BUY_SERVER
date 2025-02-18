@@ -53,6 +53,8 @@ const productSchema = new Schema(
 
     // Optional
     description: { type: String },
+    // createdAt: { type: Date },
+    // updatedAt: { type: Date },
   },
   { timestamps: true }
 );

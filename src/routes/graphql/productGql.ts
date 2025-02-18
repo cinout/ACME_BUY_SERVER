@@ -9,8 +9,9 @@ import {
 } from "@/utils/gqlErrorResponse";
 import { GraphQLError } from "graphql";
 import { uploadImages } from "@/utils/imageUpload";
-import { RoleEnum } from "@/utils/enums";
+import { GradingEnum, MediaFormatEnum, RoleEnum } from "@/utils/enums";
 import { FileUpload } from "graphql-upload/processRequest.mjs";
+import { shuffleArray } from "@/utils/array";
 
 export const typeDefProduct = `
   scalar Upload
@@ -56,6 +57,13 @@ export const typeDefProduct = `
   extend type Query {
     getAllProductsByUser: [Product!]!
     getNewestProducts(count: Int!): [Product!]!
+    getNewVinyls(count: Int!): [Product!]!
+    getNewCassettes(count: Int!): [Product!]!
+    getNewCDs(count: Int!): [Product!]!
+    getNewReleases(count: Int!): [Product!]!
+    getOldReleases(count: Int!): [Product!]!
+    getDiscounted(count: Int!): [Product!]!
+    getMint(count: Int!): [Product!]!
   }  
 
   extend type Mutation {
@@ -92,6 +100,104 @@ export const resolversProduct = {
           .sort("-createdAt")
           .limit(count);
         return products;
+      } catch (e) {
+        gqlGenericError(e as Error);
+      }
+    },
+
+    getNewVinyls: async (_: unknown, { count }: { count: number }) => {
+      try {
+        const products = await ProductModel.find({
+          format: {
+            $in: [
+              MediaFormatEnum.Vinyl_7,
+              MediaFormatEnum.Vinyl_10,
+              MediaFormatEnum.Vinyl_12,
+            ],
+          },
+        })
+          .sort("-createdAt")
+          .limit(count);
+
+        return products;
+      } catch (e) {
+        gqlGenericError(e as Error);
+      }
+    },
+    getNewCDs: async (_: unknown, { count }: { count: number }) => {
+      try {
+        const products = await ProductModel.find({
+          format: MediaFormatEnum.CD,
+        })
+          .sort("-createdAt")
+          .limit(count);
+
+        return products;
+      } catch (e) {
+        gqlGenericError(e as Error);
+      }
+    },
+    getNewCassettes: async (_: unknown, { count }: { count: number }) => {
+      try {
+        const products = await ProductModel.find({
+          format: MediaFormatEnum.Cassette,
+        })
+          .sort("-createdAt")
+          .limit(count);
+
+        return products;
+      } catch (e) {
+        gqlGenericError(e as Error);
+      }
+    },
+    getNewReleases: async (_: unknown, { count }: { count: number }) => {
+      try {
+        const endYear = new Date().getFullYear();
+        let products = await ProductModel.aggregate([
+          { $match: { year: endYear } }, // filter the results
+          { $sample: { size: count } },
+        ]);
+        if (products.length < count) {
+          const appendResults = await ProductModel.aggregate([
+            { $match: { year: endYear - 1 } }, // filter the results
+            { $sample: { size: count - products.length } },
+          ]);
+          products = [...products, ...appendResults];
+        }
+        return products.map((a) => ({ ...a, id: a._id.toString() }));
+      } catch (e) {
+        gqlGenericError(e as Error);
+      }
+    },
+    getOldReleases: async (_: unknown, { count }: { count: number }) => {
+      try {
+        const products = await ProductModel.aggregate([
+          { $match: { year: { $lte: 1980 } } }, // filter the results
+          { $sample: { size: count } },
+        ]);
+        return products.map((a) => ({ ...a, id: a._id.toString() }));
+      } catch (e) {
+        gqlGenericError(e as Error);
+      }
+    },
+    getDiscounted: async (_: unknown, { count }: { count: number }) => {
+      try {
+        const products = await ProductModel.aggregate([
+          { $match: { discount: { $lte: 30 } } }, // filter the results
+          { $sample: { size: count } },
+        ]);
+        return products.map((a) => ({ ...a, id: a._id.toString() }));
+      } catch (e) {
+        gqlGenericError(e as Error);
+      }
+    },
+    getMint: async (_: unknown, { count }: { count: number }) => {
+      try {
+        const products = await ProductModel.aggregate([
+          { $match: { grading: GradingEnum.Mint } }, // filter the results
+          { $sample: { size: count } },
+        ]);
+        return products.map((a) => ({ ...a, id: a._id.toString() }));
       } catch (e) {
         gqlGenericError(e as Error);
       }
