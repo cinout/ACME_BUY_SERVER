@@ -64,6 +64,7 @@ export const typeDefProduct = `
     getOldReleases(count: Int!): [Product!]!
     getDiscounted(count: Int!): [Product!]!
     getMint(count: Int!): [Product!]!
+    getById(id: ID!): Product!
   }  
 
   extend type Mutation {
@@ -198,6 +199,19 @@ export const resolversProduct = {
           { $sample: { size: count } },
         ]);
         return products.map((a) => ({ ...a, id: a._id.toString() }));
+      } catch (e) {
+        gqlGenericError(e as Error);
+      }
+    },
+    getById: async (_: unknown, { id }: { id: string }) => {
+      try {
+        const product = await ProductModel.findById(id);
+        if (!product) {
+          throw new GraphQLError(`The product does not exist.`, {
+            extensions: gql_custom_code_bad_user_input,
+          });
+        }
+        return product;
       } catch (e) {
         gqlGenericError(e as Error);
       }
