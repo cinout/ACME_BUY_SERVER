@@ -15,6 +15,7 @@ import mongoose from "mongoose";
 
 export const typeDefProduct = `
   scalar ImageWithID
+  scalar TrackList
 
   type Product {
     id: ID!
@@ -26,15 +27,15 @@ export const typeDefProduct = `
     format: String!
     grading: String!
     region: String!
-    genreId: ID!
-    genre: Genre
+    genreIds: [ID!]!
+    genres: [Genre!]!
     userId: ID!
     user: User
     stock: Int!
     price: Float!
     discount: Float!
     images: [ImageWithID!]!
-    rating: Float!
+    tracklist: [TrackList!]
     description: String
   }
 
@@ -46,12 +47,12 @@ export const typeDefProduct = `
     grading: String
     region: String
     images: [ImageWithID!]
-    genreId: ID
+    genreIds: [ID!]
+    tracklist: [TrackList!]
     stock: Int
     price: Float
     discount: Float
     description: String
-    rating: Float
   }
 
   extend type Query {
@@ -68,7 +69,7 @@ export const typeDefProduct = `
   }  
 
   extend type Mutation {
-    createProduct(name: String!, artist: String!, year: Int!, format: String!, grading: String!, region: String!, images: [ImageWithID!]!, genreId: ID!, stock: Int!, price: Float!, discount: Float!, description: String): Product!
+    createProduct(name: String!, artist: String!, year: Int!, format: String!, grading: String!, region: String!, images: [ImageWithID!]!, genreIds: [ID!], tracklist: [TrackList!], stock: Int!, price: Float!, discount: Float!, description: String): Product!
 
     updateProduct(id: ID!, input: UpdateProductInput!): Product!
     
@@ -219,17 +220,17 @@ export const resolversProduct = {
           {
             $lookup: {
               from: "genres", // Collection to join
-              localField: "genreId", // FK in products
+              localField: "genreIds", // FK in products
               foreignField: "_id", // PK in genres
-              as: "genre",
+              as: "genres",
             },
           },
           {
             $unwind: "$user", // Convert shop array into an object (assuming one shop per product)
           },
-          {
-            $unwind: "$genre", // Convert genre array into an object (assuming one genre per product)
-          },
+          // {
+          //   $unwind: "$genre", // Convert genre array into an object (assuming one genre per product)
+          // },
         ]);
 
         if (product.length === 0) {
@@ -241,10 +242,10 @@ export const resolversProduct = {
         const mappedProduct = product.map((a) => ({
           ...a,
           id: a._id.toString(),
-          genre: {
-            ...a.genre,
-            id: a.genre._id.toString(),
-          },
+          genres: a.genres.map((a: { _id: { toString: () => string } }) => ({
+            ...a,
+            id: a._id.toString(),
+          })),
           user: {
             ...a.user,
             id: a.user._id.toString(),
@@ -271,7 +272,8 @@ export const resolversProduct = {
         grading,
         region,
         description,
-        genreId,
+        genreIds,
+        tracklist,
         stock,
       }: {
         name: string;
@@ -284,7 +286,8 @@ export const resolversProduct = {
         discount: number;
         artist: string;
         description: string;
-        genreId: string;
+        genreIds: string[];
+        tracklist: { id: string; title: string; indexDisplay: string }[];
         stock: number;
         year: number;
         format: string;
@@ -303,7 +306,8 @@ export const resolversProduct = {
           discount,
           artist,
           description,
-          genreId,
+          genreIds,
+          tracklist,
           userId: id,
           stock,
           images: uploadResult,

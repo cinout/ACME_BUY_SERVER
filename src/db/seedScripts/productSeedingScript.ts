@@ -1,7 +1,10 @@
 import UserModel from "@/models/UserModel";
 import ProductModel from "@/models/ProductModel";
 import GenreModel from "@/models/GenreModel";
-import { selectRandomItemFromArray } from "@/utils/array";
+import {
+  selectRandomItemFromArray,
+  selectRandomNItemsFromArray,
+} from "@/utils/array";
 import { faker } from "@faker-js/faker";
 import seedingScriptConnectDB from ".";
 import musicInfo from "@/utils/musicInfo.json";
@@ -34,10 +37,19 @@ async function productScript() {
           file: a,
           name: `image ${i}`,
         })),
+        tracklist: music.tracklist?.map((a) => ({
+          id: v7(),
+          title: a.title,
+          indexDisplay: a.indexDisplay,
+        })),
         format: selectRandomItemFromArray(Object.values(MediaFormatEnum)),
         grading: selectRandomItemFromArray(Object.values(GradingEnum)),
         region: selectRandomItemFromArray(Object.values(ReleaseRegionEnum)),
-        genreId: selectRandomItemFromArray(allGenreIds),
+        genreIds: selectRandomNItemsFromArray(
+          allGenreIds,
+          selectRandomItemFromArray([1, 2, 3])
+        ),
+
         userId: selectRandomItemFromArray(allUserIds),
         stock: faker.number.int({ min: 0, max: 100, multipleOf: 1 }),
         price: faker.number.float({ min: 0, max: 600, multipleOf: 0.01 }),
@@ -45,7 +57,7 @@ async function productScript() {
           Math.random() < 0.05
             ? faker.number.float({ min: 0, max: 100, multipleOf: 0.1 })
             : 0,
-        rating: faker.number.float({ min: 0, max: 5, multipleOf: 0.1 }),
+
         description: faker.lorem.paragraph({ min: 1, max: 8 }),
         createdAt: randomDate,
         updatedAt: randomDate,

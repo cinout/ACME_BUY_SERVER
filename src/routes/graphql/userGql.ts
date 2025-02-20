@@ -46,6 +46,8 @@ export const typeDefUser = `
     zipCode: String
     imageUrl: String!
     imageName: String!
+    rating: Float!
+    wishList: [ID!]!
   }
 
   input UpdateUserInput {
@@ -58,6 +60,8 @@ export const typeDefUser = `
     city: String
     zipCode: String
     image: Upload
+    rating: Float
+    wishList: [ID!]
   }
 
   extend type Query {

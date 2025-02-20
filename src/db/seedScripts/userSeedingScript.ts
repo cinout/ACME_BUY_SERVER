@@ -51,6 +51,8 @@ async function userScript() {
         country: country,
         state: state,
         city: city,
+        rating: faker.number.float({ min: 0, max: 5, multipleOf: 0.1 }),
+        // TODO: wishlist
 
         zipCode: faker.location.zipCode(),
         role: RoleEnum.User,

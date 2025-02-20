@@ -25,8 +25,8 @@ const productSchema = new Schema(
       required: true,
     },
 
-    genreId: {
-      type: Schema.Types.ObjectId,
+    genreIds: {
+      type: [Schema.Types.ObjectId],
       required: true,
       ref: "Genre",
     },
@@ -48,15 +48,25 @@ const productSchema = new Schema(
       ],
       required: true,
     },
-    rating: { type: Number, default: 0, required: true },
+    tracklist: {
+      type: [
+        {
+          id: { type: String, required: true },
+          title: { type: String, required: true },
+          indexDisplay: { type: String, required: true },
+        },
+      ],
+    },
+
     // TODO: how to validate different Number types (Int, Float, ...)
 
     // Optional
     description: { type: String },
-    // createdAt: { type: Date },
-    // updatedAt: { type: Date },
-  },
-  { timestamps: true }
+    // TODO: check
+    createdAt: { type: Date },
+    updatedAt: { type: Date },
+  }
+  // { timestamps: true }
 );
 
 // Transform _id to id

@@ -35,6 +35,12 @@ const userSchema = new Schema(
     state: { type: String },
     city: { type: String },
     zipCode: { type: String },
+    rating: { type: Number, default: 0, required: true },
+    wishList: {
+      type: [String],
+      required: true,
+      default: [],
+    },
   },
   { timestamps: true }
 );
