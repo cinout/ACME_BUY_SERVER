@@ -1136,16 +1136,18 @@ export async function getAlbumCover(times: number) {
       artist: string;
       title: string;
       year: number;
+      tracklist: { title: string; number: string }[];
       images: string[];
     }[] = [];
     const filePath = "output.json";
     try {
       // ARTIST
-      const random_number = Math.floor(Math.random() * 500000);
+      const random_number = Math.floor(Math.random() * 200000);
       const getRandomArtist = `https://musicbrainz.org/ws/2/artist?query=*&limit=1&offset=${random_number}&fmt=json`;
       const responseArtist = await fetch(getRandomArtist, {
         headers: {
           "User-Agent": "MyMusicApp/1.0",
+          Accept: "application/json",
         },
       });
       const artistData = await responseArtist.json();
@@ -1160,6 +1162,7 @@ export async function getAlbumCover(times: number) {
       const responseReleases = await fetch(getReleasesFromArtist, {
         headers: {
           "User-Agent": "MyMusicApp/1.0",
+          Accept: "application/json",
         },
       });
       const releaseData = await responseReleases.json();
@@ -1168,6 +1171,7 @@ export async function getAlbumCover(times: number) {
         console.log("No album found.");
         return null;
       }
+
       const allReleases = releaseData["release-groups"].map(
         (a: { id: string; title: string; "first-release-date": string }) => ({
           id: a.id,
@@ -1181,25 +1185,28 @@ export async function getAlbumCover(times: number) {
 
       // Album
       for (let i = 0; i < takeN; i++) {
-        const { id: releaseId, title, year } = allReleases[i];
+        const currentRelease = allReleases[i];
+        const { id: releaseId, title, year } = currentRelease;
 
         const getRelease = `https://coverartarchive.org/release-group/${releaseId}`;
-        const responseAlbum = await fetch(getRelease, {
+        const responseRelease = await fetch(getRelease, {
           headers: {
             "User-Agent": "MyMusicApp/1.0",
+            Accept: "application/json",
           },
         });
-        const album = await responseAlbum.json();
+        const release = await responseRelease.json();
 
-        if (!album["images"].length) {
-          console.log("No album image found.");
+        // Images
+        if (!release["images"].length) {
+          console.log("No release image found.");
           continue;
         }
 
         const frontImages: string[] = [];
         const backImages: string[] = [];
 
-        album.images.forEach((a: { front: boolean; image: string }) => {
+        release.images.forEach((a: { front: boolean; image: string }) => {
           if (a.front) {
             frontImages.push(a.image);
           } else {
@@ -1207,10 +1214,30 @@ export async function getAlbumCover(times: number) {
           }
         });
 
+        // Tracklist
+
+        const albumId = release.release.split("/").slice(-1)[0];
+        const getAlbum = `https://musicbrainz.org/ws/2/release/${albumId}?inc=recordings`;
+        const responseAlbum = await fetch(getAlbum, {
+          headers: {
+            "User-Agent": "MyMusicApp/1.0",
+            Accept: "application/json",
+          },
+        });
+        const album = await responseAlbum.json();
+        const tracklist = album?.media?.[0]?.tracks?.map(
+          (track: { title: string; number: string }) => ({
+            title: track.title,
+            indexDisplay: track.number,
+          })
+        );
+
+        // return
         albumData.push({
           artist: artistName,
           title,
           year,
+          tracklist,
           images: [...frontImages, ...backImages].slice(0, 8),
         });
       }
@@ -1236,10 +1263,45 @@ export async function getAlbumCover(times: number) {
     }
   }
 
+  // TODO: uncomment
   for (let i = 0; i < times; i++) {
     console.log(`>>>>> running ${i}`);
     await runOnce();
   }
 
   console.log("===== End of Execution =====");
+
+  // const ladyGagaArtistId = "650e7db6-b795-4eb5-a702-5ea2fc46c848";
+  // // Releases
+  // const getReleasesFromArtist = `https://musicbrainz.org/ws/2/release-group?artist=${ladyGagaArtistId}&type=album&offset=1&fmt=json`;
+
+  // const responseReleases = await fetch(getReleasesFromArtist, {
+  //   headers: {
+  //     "User-Agent": "MyMusicApp/1.0",
+  //     Accept: "application/json",
+  //   },
+  // });
+  // const releaseData = await responseReleases.json();
+
+  // const releaseGoupDawnOfChr = "015d4df2-5618-46f8-9460-72707383b09b";
+
+  // const getRelease = `https://coverartarchive.org/release-group/${releaseGoupDawnOfChr}`;
+  // const responseRelease = await fetch(getRelease, {
+  //   headers: {
+  //     "User-Agent": "MyMusicApp/1.0",
+  //     Accept: "application/json",
+  //   },
+  // });
+  // const release = await responseRelease.json();
+
+  // const albumId = release.release.split("/").slice(-1)[0];
+  // const getAlbum = `https://musicbrainz.org/ws/2/release/${albumId}?inc=recordings`;
+  // const responseAlbum = await fetch(getAlbum, {
+  //   headers: {
+  //     "User-Agent": "MyMusicApp/1.0",
+  //     Accept: "application/json",
+  //   },
+  // });
+  // const album = await responseAlbum.json();
+  // console.log(album);
 }

@@ -27,7 +27,7 @@ app.use(graphqlUploadExpress()); // Apply the GraphQL upload middleware before y
 // Routing
 app.use("/api", routes);
 
-// getAlbumCover(1500);
+getAlbumCover(2500);
 
 // Listening
 const port = process.env.SERVER_PORT;
