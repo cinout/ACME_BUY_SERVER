@@ -11,9 +11,6 @@ import { uploadImage } from "@/utils/imageUpload";
 import { FileUpload } from "graphql-upload/processRequest.mjs";
 
 export const typeDefUser = `
-  scalar Upload
-  scalar Date
-
   enum UserStatusEnum {
     Pending
     Deactivated

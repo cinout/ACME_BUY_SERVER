@@ -12,9 +12,6 @@ import { RoleEnum } from "@/utils/enums";
 import { FileUpload } from "graphql-upload/processRequest.mjs";
 
 export const typeDefGenre = `
-  scalar Upload
-  scalar Date
-
   input UpdateGenreInput {
     name: String
     image: Upload

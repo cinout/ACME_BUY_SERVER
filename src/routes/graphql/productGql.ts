@@ -11,11 +11,9 @@ import { GraphQLError } from "graphql";
 import { uploadImages } from "@/utils/imageUpload";
 import { GradingEnum, MediaFormatEnum, RoleEnum } from "@/utils/enums";
 import { FileUpload } from "graphql-upload/processRequest.mjs";
-import { shuffleArray } from "@/utils/array";
+import mongoose from "mongoose";
 
 export const typeDefProduct = `
-  scalar Upload
-  scalar Date
   scalar ImageWithID
 
   type Product {
@@ -29,7 +27,9 @@ export const typeDefProduct = `
     grading: String!
     region: String!
     genreId: ID!
+    genre: Genre
     userId: ID!
+    user: User
     stock: Int!
     price: Float!
     discount: Float!
@@ -205,13 +205,53 @@ export const resolversProduct = {
     },
     getById: async (_: unknown, { id }: { id: string }) => {
       try {
-        const product = await ProductModel.findById(id);
-        if (!product) {
+        // const product = await ProductModel.findById(id);
+        const product = await ProductModel.aggregate([
+          { $match: { _id: new mongoose.Types.ObjectId(id) } }, // Find the product
+          {
+            $lookup: {
+              from: "users", // Collection to join
+              localField: "userId", // FK in products
+              foreignField: "_id", // PK in shops
+              as: "user",
+            },
+          },
+          {
+            $lookup: {
+              from: "genres", // Collection to join
+              localField: "genreId", // FK in products
+              foreignField: "_id", // PK in genres
+              as: "genre",
+            },
+          },
+          {
+            $unwind: "$user", // Convert shop array into an object (assuming one shop per product)
+          },
+          {
+            $unwind: "$genre", // Convert genre array into an object (assuming one genre per product)
+          },
+        ]);
+
+        if (product.length === 0) {
           throw new GraphQLError(`The product does not exist.`, {
             extensions: gql_custom_code_bad_user_input,
           });
         }
-        return product;
+
+        const mappedProduct = product.map((a) => ({
+          ...a,
+          id: a._id.toString(),
+          genre: {
+            ...a.genre,
+            id: a.genre._id.toString(),
+          },
+          user: {
+            ...a.user,
+            id: a.user._id.toString(),
+          },
+        }));
+
+        return mappedProduct[0];
       } catch (e) {
         gqlGenericError(e as Error);
       }

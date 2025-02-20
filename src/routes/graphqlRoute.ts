@@ -7,6 +7,9 @@ import { resolversUser, typeDefUser } from "@/routes/graphql/userGql";
 import { resolversAuth, typeDefAuth } from "./graphql/authGql";
 
 const typeDefQuery = `
+  scalar Upload
+  scalar Date
+
   type Query {
     _empty: String
   }
