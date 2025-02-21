@@ -65,6 +65,7 @@ export const typeDefProduct = `
     getOldReleases(count: Int!): [Product!]!
     getDiscounted(count: Int!): [Product!]!
     getMint(count: Int!): [Product!]!
+    getSimilar(count: Int!): [Product!]!
     getById(id: ID!): Product!
   }  
 
@@ -195,8 +196,19 @@ export const resolversProduct = {
     },
     getMint: async (_: unknown, { count }: { count: number }) => {
       try {
+        // TODO:[1] need to include product, and find similar genres, artist etc...
         const products = await ProductModel.aggregate([
           { $match: { grading: GradingEnum.Mint } }, // filter the results
+          { $sample: { size: count } },
+        ]);
+        return products.map((a) => ({ ...a, id: a._id.toString() }));
+      } catch (e) {
+        gqlGenericError(e as Error);
+      }
+    },
+    getSimilar: async (_: unknown, { count }: { count: number }) => {
+      try {
+        const products = await ProductModel.aggregate([
           { $sample: { size: count } },
         ]);
         return products.map((a) => ({ ...a, id: a._id.toString() }));
@@ -287,7 +299,7 @@ export const resolversProduct = {
         artist: string;
         description: string;
         genreIds: string[];
-        tracklist: { id: string; title: string; indexDisplay: string }[];
+        tracklist: { title: string; indexDisplay: string }[];
         stock: number;
         year: number;
         format: string;

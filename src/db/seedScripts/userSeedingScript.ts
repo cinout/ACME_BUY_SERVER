@@ -48,14 +48,18 @@ async function userScript() {
         imageUrl: faker.image.personPortrait({ size: 256 }),
         imageName: "default_image.jpg",
 
+        rating:
+          Math.random() < 0.5
+            ? faker.number.float({ min: 0, max: 5, multipleOf: 0.1 })
+            : 4.6,
+
         country: country,
         state: state,
         city: city,
-        rating: faker.number.float({ min: 0, max: 5, multipleOf: 0.1 }),
-        // TODO: wishlist
 
         zipCode: faker.location.zipCode(),
         role: RoleEnum.User,
+        // wishlist
       };
     });
 

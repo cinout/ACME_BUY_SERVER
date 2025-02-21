@@ -51,7 +51,6 @@ const productSchema = new Schema(
     tracklist: {
       type: [
         {
-          id: { type: String, required: true },
           title: { type: String, required: true },
           indexDisplay: { type: String, required: true },
         },

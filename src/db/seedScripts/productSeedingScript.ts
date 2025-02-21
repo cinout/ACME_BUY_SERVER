@@ -38,7 +38,6 @@ async function productScript() {
           name: `image ${i}`,
         })),
         tracklist: music.tracklist?.map((a) => ({
-          id: v7(),
           title: a.title,
           indexDisplay: a.indexDisplay,
         })),
@@ -51,13 +50,12 @@ async function productScript() {
         ),
 
         userId: selectRandomItemFromArray(allUserIds),
-        stock: faker.number.int({ min: 0, max: 100, multipleOf: 1 }),
-        price: faker.number.float({ min: 0, max: 600, multipleOf: 0.01 }),
+        stock: faker.number.int({ min: 0, max: 6, multipleOf: 1 }),
+        price: faker.number.float({ min: 1, max: 100, multipleOf: 0.01 }),
         discount:
-          Math.random() < 0.05
+          Math.random() < 0.1
             ? faker.number.float({ min: 0, max: 100, multipleOf: 0.1 })
             : 0,
-
         description: faker.lorem.paragraph({ min: 1, max: 8 }),
         createdAt: randomDate,
         updatedAt: randomDate,

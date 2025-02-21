@@ -1,7 +1,11 @@
 import musicInfo from "@/utils/musicInfo.json";
 
 const length = musicInfo.length;
-console.log("total length:", length);
+console.log(
+  "total length:",
+  length,
+  ", remember to set items with year:null to a random year"
+);
 
 const newValues = musicInfo.map((a) => a.artist + " " + a.title);
 const seen = new Set();
