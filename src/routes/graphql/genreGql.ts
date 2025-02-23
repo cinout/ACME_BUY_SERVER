@@ -28,6 +28,7 @@ export const typeDefGenre = `
 
   extend type Query {
     getAllGenres: [Genre!]!
+    getGenreById(id: ID!): Genre!
   }  
 
   extend type Mutation {
@@ -43,6 +44,19 @@ export const resolversGenre = {
       try {
         const allGenres = await GenreModel.find();
         return allGenres;
+      } catch (e) {
+        gqlGenericError(e as Error);
+      }
+    },
+    getGenreById: async (_: unknown, { id }: { id: string }) => {
+      try {
+        const genre = await GenreModel.findById(id);
+        if (!genre) {
+          throw new GraphQLError(`The genre does not exist.`, {
+            extensions: gql_custom_code_bad_user_input,
+          });
+        }
+        return genre;
       } catch (e) {
         gqlGenericError(e as Error);
       }

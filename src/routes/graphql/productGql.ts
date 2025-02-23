@@ -67,7 +67,7 @@ export const typeDefProduct = `
     getDiscounted(count: Int!): [Product!]!
     getMint(count: Int!): [Product!]!
     getSimilar(count: Int!): [Product!]!
-    getById(id: ID!): Product!
+    getProductById(id: ID!): Product!
   }  
 
   extend type Mutation {
@@ -217,7 +217,7 @@ export const resolversProduct = {
         gqlGenericError(e as Error);
       }
     },
-    getById: async (_: unknown, { id }: { id: string }) => {
+    getProductById: async (_: unknown, { id }: { id: string }) => {
       try {
         // const product = await ProductModel.findById(id);
         const product = await ProductModel.aggregate([
