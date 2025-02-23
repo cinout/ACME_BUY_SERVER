@@ -272,7 +272,7 @@ export const resolversProduct = {
     },
   },
   // TODO: Field resolvers
-  Item: {},
+  // Item: {},
   Mutation: {
     createProduct: async (
       _: unknown,
