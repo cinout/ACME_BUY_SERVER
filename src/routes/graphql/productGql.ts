@@ -12,6 +12,7 @@ import { uploadImages } from "@/utils/imageUpload";
 import { GradingEnum, MediaFormatEnum, RoleEnum } from "@/utils/enums";
 import { FileUpload } from "graphql-upload/processRequest.mjs";
 import mongoose from "mongoose";
+import { resolversGenre } from "./genreGql";
 
 export const typeDefProduct = `
   scalar ImageWithID
@@ -270,6 +271,8 @@ export const resolversProduct = {
       }
     },
   },
+  // TODO: Field resolvers
+  Item: {},
   Mutation: {
     createProduct: async (
       _: unknown,

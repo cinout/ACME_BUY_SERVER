@@ -48,6 +48,7 @@ export const resolversGenre = {
       }
     },
   },
+
   Mutation: {
     createGenre: async (
       _: unknown,
