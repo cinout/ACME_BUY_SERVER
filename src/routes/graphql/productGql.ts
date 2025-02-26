@@ -9,10 +9,15 @@ import {
 } from "@/utils/gqlErrorResponse";
 import { GraphQLError } from "graphql";
 import { uploadImages } from "@/utils/imageUpload";
-import { GradingEnum, MediaFormatEnum, RoleEnum } from "@/utils/enums";
+import {
+  GradingEnum,
+  MediaFormatEnum,
+  ReleaseYearRangeEnum,
+  RoleEnum,
+} from "@/utils/enums";
 import { FileUpload } from "graphql-upload/processRequest.mjs";
 import mongoose from "mongoose";
-import { resolversGenre } from "./genreGql";
+import { getYearRangeForMongoDB } from "@/utils/date";
 
 export const typeDefProduct = `
   scalar ImageWithID
@@ -40,6 +45,11 @@ export const typeDefProduct = `
     description: String
   }
 
+  type ProductPagination {
+    products: [Product!]!
+    count: Int!
+  }
+
   input UpdateProductInput {
     name: String
     artist: String
@@ -56,6 +66,14 @@ export const typeDefProduct = `
     description: String
   }
 
+  input FilterOptions {
+    genre: String
+    format: String
+    year: String
+    grading: String
+    region: String
+  }
+
   extend type Query {
     getAllProductsByUser: [Product!]!
     getNewestProducts(count: Int!): [Product!]!
@@ -68,7 +86,8 @@ export const typeDefProduct = `
     getMint(count: Int!): [Product!]!
     getSimilar(count: Int!): [Product!]!
     getProductById(id: ID!): Product!
-  }  
+    getCollection(take: Int!, skip: Int!, sorting: String, filters: FilterOptions): ProductPagination
+  }
 
   extend type Mutation {
     createProduct(name: String!, artist: String!, year: Int!, format: String!, grading: String!, region: String!, images: [ImageWithID!]!, genreIds: [ID!], tracklist: [TrackList!], stock: Int!, price: Float!, discount: Float!, description: String): Product!
@@ -220,6 +239,14 @@ export const resolversProduct = {
     getProductById: async (_: unknown, { id }: { id: string }) => {
       try {
         // const product = await ProductModel.findById(id);
+        // if (!product) {
+        //   if (!product) {
+        //     throw new GraphQLError(`The product does not exist.`, {
+        //       extensions: gql_custom_code_bad_user_input,
+        //     });
+        //   }
+        // }
+        // return product;
         const product = await ProductModel.aggregate([
           { $match: { _id: new mongoose.Types.ObjectId(id) } }, // Find the product
           {
@@ -270,9 +297,149 @@ export const resolversProduct = {
         gqlGenericError(e as Error);
       }
     },
+    getCollection: async (
+      _: unknown,
+      {
+        take,
+        skip,
+        sorting,
+        filters,
+      }: {
+        take: number;
+        skip: number;
+        sorting?: string;
+        filters: {
+          genre?: string;
+          format?: string;
+          year?: ReleaseYearRangeEnum;
+          grading?: string;
+          region?: string;
+        };
+      }
+    ) => {
+      try {
+        // handle filters
+        const query: {
+          genreIds?: { $in: mongoose.Types.ObjectId[] };
+          format?: string;
+          year?: { $lt: number; $gte?: number | undefined };
+          grading?: string;
+          region?: string;
+        } = {};
+        if (filters.format) {
+          query.format = filters.format;
+        }
+        if (filters.grading) {
+          query.grading = filters.grading;
+        }
+        if (filters.region) {
+          query.region = filters.region;
+        }
+        if (filters.year) {
+          query.year = getYearRangeForMongoDB(filters.year);
+        }
+        if (filters.genre) {
+          query.genreIds = {
+            $in: [new mongoose.Types.ObjectId(filters.genre)],
+          };
+        }
+
+        // handle sorting
+        let sortValue = null;
+        switch (sorting) {
+          case "added-desc": {
+            sortValue = { createdAt: -1 };
+            // sortValue = "-createdAt";
+            break;
+          }
+          case "added-asc": {
+            sortValue = { createdAt: 1 };
+            // sortValue = "createdAt";
+            break;
+          }
+          case "year-desc": {
+            sortValue = { year: -1 };
+            // sortValue = "-year";
+            break;
+          }
+          case "year-asc": {
+            sortValue = { year: 1 };
+            // sortValue = "year";
+            break;
+          }
+          // TODO:[3] price should be price X discount
+          case "price-desc": {
+            sortValue = { discountedPrice: -1 };
+            // sortValue = "-price";
+            break;
+          }
+          case "price-asc": {
+            sortValue = { discountedPrice: 1 };
+            // sortValue = "price";
+            break;
+          }
+          case "name-desc": {
+            sortValue = { name: -1 };
+            // sortValue = "-name";
+            break;
+          }
+          case "name-asc": {
+            sortValue = { name: 1 };
+            // sortValue = "name";
+            break;
+          }
+        }
+        const count = await ProductModel.countDocuments(query);
+
+        // const products = await ProductModel.find(query)
+        //   .sort(sortValue)
+        //   .skip(skip)
+        //   .limit(take);
+
+        const products = await ProductModel.aggregate([
+          {
+            $addFields: {
+              discountedPrice: {
+                $divide: [
+                  { $multiply: ["$price", { $subtract: [100, "$discount"] }] },
+                  100,
+                ],
+              }, // Compute product
+            },
+          },
+          { $match: query },
+          ...(sortValue ? [{ $sort: sortValue }] : []),
+          { $skip: skip },
+          { $limit: take },
+        ]);
+
+        const mappedProduct = products.map((a) => ({
+          ...a,
+          id: a._id.toString(),
+          // genres: a.genres.map((a: { _id: { toString: () => string } }) => ({
+          //   ...a,
+          //   id: a._id.toString(),
+          // })),
+          // user: {
+          //   ...a.user,
+          //   id: a.user._id.toString(),
+          // },
+        }));
+
+        return { products: mappedProduct, count };
+      } catch (e) {
+        gqlGenericError(e as Error);
+      }
+    },
   },
-  // TODO: Field resolvers
-  // Item: {},
+  // TODO: Field resolvers for nested fields + DataLoader (Avoid N+1 Queries) ???
+  // Product: {
+  //   user: async (parent: unknown, { userId }: { userId: string }) => {
+  //     console.log("parent", parent);
+  //     console.log("userId", userId);
+  //     // return resolversUser.Query.getUserById(_, { id: userId });
+  //   },
+  // },
   Mutation: {
     createProduct: async (
       _: unknown,

@@ -67,6 +67,7 @@ export const typeDefUser = `
   extend type Query {
     getCurrentUser: User!
     getAllUsers: [User!]!
+    getUserById(id: ID!): User!
   }
   
   extend type Mutation {
@@ -101,6 +102,19 @@ export const resolversUser = {
         checkRole(role, [RoleEnum.Admin]); // TODO:[1] see if you need to update
         const users = await UserModel.find({ role: RoleEnum.User });
         return users;
+      } catch (e) {
+        gqlGenericError(e as Error);
+      }
+    },
+    getUserById: async (_: unknown, { id }: { id: string }) => {
+      try {
+        const user = await UserModel.findById(id);
+        if (!user) {
+          throw new GraphQLError(`The user does not exist.`, {
+            extensions: gql_custom_code_bad_user_input,
+          });
+        }
+        return user;
       } catch (e) {
         gqlGenericError(e as Error);
       }
