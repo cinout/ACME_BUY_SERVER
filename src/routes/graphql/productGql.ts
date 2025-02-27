@@ -83,9 +83,11 @@ export const typeDefProduct = `
     getNewReleases(count: Int!): [Product!]!
     getOldReleases(count: Int!): [Product!]!
     getDiscounted(count: Int!): [Product!]!
+    getLowPrice(count: Int!): [Product!]!
     getMint(count: Int!): [Product!]!
     getSimilar(count: Int!): [Product!]!
-    getProductById(id: ID!): Product!
+    getProductAndRelatedDetailsById(id: ID!): Product!
+    getProductByUserId(id: ID!): [Product!]!
     getCollection(take: Int!, skip: Int!, sorting: String, filters: FilterOptions): ProductPagination
   }
 
@@ -214,6 +216,27 @@ export const resolversProduct = {
         gqlGenericError(e as Error);
       }
     },
+    getLowPrice: async (_: unknown, { count }: { count: number }) => {
+      try {
+        const products = await ProductModel.aggregate([
+          {
+            $addFields: {
+              discountedPrice: {
+                $divide: [
+                  { $multiply: ["$price", { $subtract: [100, "$discount"] }] },
+                  100,
+                ],
+              }, // Compute product
+            },
+          },
+          { $sort: { discountedPrice: 1 } }, // filter the results
+          { $limit: count },
+        ]);
+        return products.map((a) => ({ ...a, id: a._id.toString() }));
+      } catch (e) {
+        gqlGenericError(e as Error);
+      }
+    },
     getMint: async (_: unknown, { count }: { count: number }) => {
       try {
         // TODO:[1] need to include product, and find similar genres, artist etc...
@@ -236,7 +259,10 @@ export const resolversProduct = {
         gqlGenericError(e as Error);
       }
     },
-    getProductById: async (_: unknown, { id }: { id: string }) => {
+    getProductAndRelatedDetailsById: async (
+      _: unknown,
+      { id }: { id: string }
+    ) => {
       try {
         // const product = await ProductModel.findById(id);
         // if (!product) {
@@ -293,6 +319,14 @@ export const resolversProduct = {
         }));
 
         return mappedProduct[0];
+      } catch (e) {
+        gqlGenericError(e as Error);
+      }
+    },
+    getProductByUserId: async (_: unknown, { id }: { id: string }) => {
+      try {
+        const products = await ProductModel.find({ userId: id });
+        return products;
       } catch (e) {
         gqlGenericError(e as Error);
       }

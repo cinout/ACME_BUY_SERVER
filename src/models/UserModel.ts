@@ -37,7 +37,7 @@ const userSchema = new Schema(
     zipCode: { type: String },
     rating: { type: Number, default: 0, required: true },
     wishList: {
-      type: [String],
+      type: [Schema.Types.ObjectId],
       required: true,
       default: [],
     },

@@ -42,3 +42,4 @@ Backend code for ACME BUY
 - [ ] should I use http-errors package?
 - [ ] delete image from cloudinary if image is removed
 - [ ] database password
+- [ ] FK constraint: (1) user:wishlist - product:id; (2) product.userId - user.id; (3) check all other Schema.Types.ObjectId in schema definition

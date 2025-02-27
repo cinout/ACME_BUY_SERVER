@@ -62,10 +62,10 @@ const productSchema = new Schema(
     // Optional
     description: { type: String },
     // TODO: check
-    createdAt: { type: Date },
-    updatedAt: { type: Date },
-  }
-  // { timestamps: true }
+    // createdAt: { type: Date },
+    // updatedAt: { type: Date },
+  },
+  { timestamps: true }
 );
 
 // Transform _id to id

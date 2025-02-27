@@ -9,6 +9,7 @@ import UserModel from "@/models/UserModel";
 import { GraphQLError } from "graphql";
 import { uploadImage } from "@/utils/imageUpload";
 import { FileUpload } from "graphql-upload/processRequest.mjs";
+import mongoose from "mongoose";
 
 export const typeDefUser = `
   enum UserStatusEnum {
@@ -48,6 +49,7 @@ export const typeDefUser = `
     imageName: String!
     rating: Float!
     wishList: [ID!]!
+    products: [Product!]
   }
 
   input UpdateUserInput {
@@ -119,6 +121,25 @@ export const resolversUser = {
         gqlGenericError(e as Error);
       }
     },
+    // getSellerAndProducts: async (_: unknown, { id }: { id: string }) => {
+    //   try {
+    //     const seller = await UserModel.aggregate([
+    //       { $match: { _id: new mongoose.Types.ObjectId(id) } },
+    //       {
+    //         $lookup: {
+    //           from: "products", // Collection to join
+    //           localField: "_id",
+    //           foreignField: "userId",
+    //           as: "products",
+    //         },
+    //       },
+    //     ]);
+    //     console.log(seller);
+    //     // return seller;
+    //   } catch (e) {
+    //     gqlGenericError(e as Error);
+    //   }
+    // },
   },
   Mutation: {
     updateCurrentUser: async (
