@@ -259,70 +259,7 @@ export const resolversProduct = {
         gqlGenericError(e as Error);
       }
     },
-    getProductAndRelatedDetailsById: async (
-      _: unknown,
-      { id }: { id: string }
-    ) => {
-      try {
-        // const product = await ProductModel.findById(id);
-        // if (!product) {
-        //   if (!product) {
-        //     throw new GraphQLError(`The product does not exist.`, {
-        //       extensions: gql_custom_code_bad_user_input,
-        //     });
-        //   }
-        // }
-        // return product;
-        const product = await ProductModel.aggregate([
-          { $match: { _id: new mongoose.Types.ObjectId(id) } }, // Find the product
-          {
-            $lookup: {
-              from: "users", // Collection to join
-              localField: "userId", // FK in products
-              foreignField: "_id", // PK in shops
-              as: "user",
-            },
-          },
-          {
-            $lookup: {
-              from: "genres", // Collection to join
-              localField: "genreIds", // FK in products
-              foreignField: "_id", // PK in genres
-              as: "genres",
-            },
-          },
-          {
-            $unwind: "$user", // Convert shop array into an object (assuming one shop per product)
-          },
-          // {
-          //   $unwind: "$genre", // Convert genre array into an object (assuming one genre per product)
-          // },
-        ]);
 
-        if (product.length === 0) {
-          throw new GraphQLError(`The product does not exist.`, {
-            extensions: gql_custom_code_bad_user_input,
-          });
-        }
-
-        const mappedProduct = product.map((a) => ({
-          ...a,
-          id: a._id.toString(),
-          genres: a.genres.map((a: { _id: { toString: () => string } }) => ({
-            ...a,
-            id: a._id.toString(),
-          })),
-          user: {
-            ...a.user,
-            id: a.user._id.toString(),
-          },
-        }));
-
-        return mappedProduct[0];
-      } catch (e) {
-        gqlGenericError(e as Error);
-      }
-    },
     getProductByUserId: async (_: unknown, { id }: { id: string }) => {
       try {
         const products = await ProductModel.find({ userId: id });
@@ -461,6 +398,70 @@ export const resolversProduct = {
         }));
 
         return { products: mappedProduct, count };
+      } catch (e) {
+        gqlGenericError(e as Error);
+      }
+    },
+    getProductAndRelatedDetailsById: async (
+      _: unknown,
+      { id }: { id: string }
+    ) => {
+      try {
+        // const product = await ProductModel.findById(id);
+        // if (!product) {
+        //   if (!product) {
+        //     throw new GraphQLError(`The product does not exist.`, {
+        //       extensions: gql_custom_code_bad_user_input,
+        //     });
+        //   }
+        // }
+        // return product;
+        const product = await ProductModel.aggregate([
+          { $match: { _id: new mongoose.Types.ObjectId(id) } }, // Find the product
+          {
+            $lookup: {
+              from: "users", // Collection to join
+              localField: "userId", // FK in products
+              foreignField: "_id", // PK in shops
+              as: "user",
+            },
+          },
+          {
+            $lookup: {
+              from: "genres", // Collection to join
+              localField: "genreIds", // FK in products
+              foreignField: "_id", // PK in genres
+              as: "genres",
+            },
+          },
+          {
+            $unwind: "$user", // Convert shop array into an object (assuming one shop per product)
+          },
+          // {
+          //   $unwind: "$genre", // Convert genre array into an object (assuming one genre per product)
+          // },
+        ]);
+
+        if (product.length === 0) {
+          throw new GraphQLError(`The product does not exist.`, {
+            extensions: gql_custom_code_bad_user_input,
+          });
+        }
+
+        const mappedProduct = product.map((a) => ({
+          ...a,
+          id: a._id.toString(),
+          genres: a.genres.map((a: { _id: { toString: () => string } }) => ({
+            ...a,
+            id: a._id.toString(),
+          })),
+          user: {
+            ...a.user,
+            id: a.user._id.toString(),
+          },
+        }));
+
+        return mappedProduct[0];
       } catch (e) {
         gqlGenericError(e as Error);
       }

@@ -12,6 +12,7 @@ import { FileUpload } from "graphql-upload/processRequest.mjs";
 import mongoose from "mongoose";
 
 export const typeDefUser = `
+  scalar CartWithQuantity
   enum UserStatusEnum {
     Pending
     Deactivated
@@ -49,6 +50,7 @@ export const typeDefUser = `
     imageName: String!
     rating: Float!
     wishList: [ID!]!
+    cart: [CartWithQuantity!]!
     products: [Product!]
   }
 
@@ -64,6 +66,7 @@ export const typeDefUser = `
     image: Upload
     rating: Float
     wishList: [ID!]
+    cart: [CartWithQuantity!]
   }
 
   extend type Query {

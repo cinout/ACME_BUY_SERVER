@@ -60,6 +60,7 @@ async function userScript() {
         zipCode: faker.location.zipCode(),
         role: RoleEnum.User,
         // wishlist
+        // cart
       };
     });
 
