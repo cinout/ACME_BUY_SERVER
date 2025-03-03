@@ -10,6 +10,7 @@ import { GraphQLError } from "graphql";
 import { uploadImage } from "@/utils/imageUpload";
 import { FileUpload } from "graphql-upload/processRequest.mjs";
 import mongoose from "mongoose";
+import { GqlRouteContext } from "..";
 
 export const typeDefUser = `
   scalar CartWithQuantity
@@ -51,7 +52,7 @@ export const typeDefUser = `
     rating: Float!
     wishList: [ID!]!
     cart: [CartWithQuantity!]!
-    products: [Product!]
+    cartDetails: [Product!]
   }
 
   input UpdateUserInput {
@@ -71,6 +72,7 @@ export const typeDefUser = `
 
   extend type Query {
     getCurrentUser: User!
+    getCurrentUserCartDetails: User!
     getAllUsers: [User!]!
     getUserById(id: ID!): User!
   }
@@ -84,6 +86,25 @@ export const typeDefUser = `
 export const resolversUser = {
   Query: {
     getCurrentUser: async (
+      _: unknown,
+      __: void,
+      { id, role }: { id: string; role: RoleEnum }
+    ) => {
+      try {
+        checkRole(role, [RoleEnum.User, RoleEnum.Admin]);
+        const user = await UserModel.findById(id);
+        if (user) {
+          return user;
+        } else {
+          throw new GraphQLError(`The user does not exist.`, {
+            extensions: gql_custom_code_bad_user_input,
+          });
+        }
+      } catch (e) {
+        gqlGenericError(e as Error);
+      }
+    },
+    getCurrentUserCartDetails: async (
       _: unknown,
       __: void,
       { id, role }: { id: string; role: RoleEnum }
@@ -143,6 +164,21 @@ export const resolversUser = {
     //     gqlGenericError(e as Error);
     //   }
     // },
+  },
+  User: {
+    cartDetails: async (
+      parent: { cart: { productId: string; quantity: number }[] },
+      _: void,
+      { loaders }: GqlRouteContext
+    ) => {
+      return await Promise.all(
+        // queues all load() calls without waiting.
+        // DataLoader batches them together in the same event loop cycle
+        parent.cart.map((cartItem) =>
+          loaders.productDataLoader.load(cartItem.productId)
+        )
+      );
+    },
   },
   Mutation: {
     updateCurrentUser: async (

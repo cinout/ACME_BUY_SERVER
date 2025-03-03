@@ -1,7 +1,6 @@
 import { RoleEnum, UserSignupMethodEnum, UserStatusEnum } from "@/utils/enums";
 import { CallbackError, Schema, model } from "mongoose";
 import argon2 from "argon2";
-import DataLoader from "dataloader";
 
 // TODO:[1] for all models, we also need to add validations that are the same in front-end, to enhance security, especially if APIs are allowed to modify items in backend
 
@@ -46,7 +45,7 @@ const userSchema = new Schema(
     cart: {
       type: [
         {
-          id: Schema.Types.ObjectId,
+          productId: Schema.Types.ObjectId,
           quantity: Number,
         },
       ],
@@ -87,7 +86,3 @@ userSchema.set("toJSON", {
 
 const User = model("User", userSchema);
 export default User;
-
-// const userLoader = new DataLoader(async (product)=>{
-
-// })

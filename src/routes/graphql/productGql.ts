@@ -16,8 +16,9 @@ import {
   RoleEnum,
 } from "@/utils/enums";
 import { FileUpload } from "graphql-upload/processRequest.mjs";
-import mongoose from "mongoose";
+import mongoose, { ObjectId } from "mongoose";
 import { getYearRangeForMongoDB } from "@/utils/date";
+import { GqlRouteContext } from "..";
 
 export const typeDefProduct = `
   scalar ImageWithID
@@ -407,74 +408,85 @@ export const resolversProduct = {
       { id }: { id: string }
     ) => {
       try {
-        // const product = await ProductModel.findById(id);
-        // if (!product) {
-        //   if (!product) {
-        //     throw new GraphQLError(`The product does not exist.`, {
-        //       extensions: gql_custom_code_bad_user_input,
-        //     });
-        //   }
-        // }
-        // return product;
-        const product = await ProductModel.aggregate([
-          { $match: { _id: new mongoose.Types.ObjectId(id) } }, // Find the product
-          {
-            $lookup: {
-              from: "users", // Collection to join
-              localField: "userId", // FK in products
-              foreignField: "_id", // PK in shops
-              as: "user",
-            },
-          },
-          {
-            $lookup: {
-              from: "genres", // Collection to join
-              localField: "genreIds", // FK in products
-              foreignField: "_id", // PK in genres
-              as: "genres",
-            },
-          },
-          {
-            $unwind: "$user", // Convert shop array into an object (assuming one shop per product)
-          },
-          // {
-          //   $unwind: "$genre", // Convert genre array into an object (assuming one genre per product)
-          // },
-        ]);
-
-        if (product.length === 0) {
-          throw new GraphQLError(`The product does not exist.`, {
-            extensions: gql_custom_code_bad_user_input,
-          });
+        const product = await ProductModel.findById(id);
+        if (!product) {
+          if (!product) {
+            throw new GraphQLError(`The product does not exist.`, {
+              extensions: gql_custom_code_bad_user_input,
+            });
+          }
         }
+        return product;
+        // const product = await ProductModel.aggregate([
+        //   { $match: { _id: new mongoose.Types.ObjectId(id) } }, // Find the product
+        //   // {
+        //   //   $lookup: {
+        //   //     from: "users", // Collection to join
+        //   //     localField: "userId", // FK in products
+        //   //     foreignField: "_id", // PK in shops
+        //   //     as: "user",
+        //   //   },
+        //   // },
+        //   {
+        //     $lookup: {
+        //       from: "genres", // Collection to join
+        //       localField: "genreIds", // FK in products
+        //       foreignField: "_id", // PK in genres
+        //       as: "genres",
+        //     },
+        //   },
+        //   // {
+        //   //   $unwind: "$user", // Convert shop array into an object (assuming one shop per product)
+        //   // },
+        // ]);
 
-        const mappedProduct = product.map((a) => ({
-          ...a,
-          id: a._id.toString(),
-          genres: a.genres.map((a: { _id: { toString: () => string } }) => ({
-            ...a,
-            id: a._id.toString(),
-          })),
-          user: {
-            ...a.user,
-            id: a.user._id.toString(),
-          },
-        }));
+        // if (product.length === 0) {
+        //   throw new GraphQLError(`The product does not exist.`, {
+        //     extensions: gql_custom_code_bad_user_input,
+        //   });
+        // }
 
-        return mappedProduct[0];
+        // const mappedProduct = product.map((a) => ({
+        //   ...a,
+        //   id: a._id.toString(),
+        //   genres: a.genres.map((a: { _id: { toString: () => string } }) => ({
+        //     ...a,
+        //     id: a._id.toString(),
+        //   })),
+        //   // user: {
+        //   //   ...a.user,
+        //   //   id: a.user._id.toString(),
+        //   // },
+        // }));
+
+        // return mappedProduct[0];
       } catch (e) {
         gqlGenericError(e as Error);
       }
     },
   },
-  // TODO: Field resolvers for nested fields + DataLoader (Avoid N+1 Queries) ???
-  // Product: {
-  //   user: async (parent: unknown, { userId }: { userId: string }) => {
-  //     console.log("parent", parent);
-  //     console.log("userId", userId);
-  //     // return resolversUser.Query.getUserById(_, { id: userId });
-  //   },
-  // },
+  Product: {
+    user: async (
+      parent: { userId: string },
+      _: void,
+      { loaders }: GqlRouteContext
+    ) => {
+      const user = await loaders.userDataLoader.load(parent.userId);
+      return user;
+    },
+    genres: async (
+      parent: { genreIds: string[] },
+      _: void,
+      { loaders }: GqlRouteContext
+    ) => {
+      // Promise.all([...]) waits for all promises to resolve in parallel.
+      return await Promise.all(
+        // queues all load() calls without waiting.
+        // DataLoader batches them together in the same event loop cycle
+        parent.genreIds.map((genreId) => loaders.genreDataLoader.load(genreId))
+      );
+    },
+  },
   Mutation: {
     createProduct: async (
       _: unknown,

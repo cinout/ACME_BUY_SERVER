@@ -5,7 +5,21 @@ import { gqlServer } from "./graphqlRoute";
 import authMiddleware, {
   AuthenticatedRequest,
 } from "@/middlewares/authMiddleware";
-// import graphqlUploadExpress from "graphql-upload/graphqlUploadExpress.mjs";
+import {
+  genreDataLoader,
+  Loaders,
+  productDataLoader,
+  userDataLoader,
+} from "@/db/dataloders";
+import { RoleEnum } from "@/utils/enums";
+
+export interface GqlRouteContext {
+  id: string;
+  role: RoleEnum;
+  email: string;
+  res: Response;
+  loaders: Loaders;
+}
 
 const router = express.Router();
 
@@ -30,7 +44,12 @@ async function initializeGraphQL() {
         const role = req.role!;
         const email = req.email!;
         const id = req.id!;
-        return { id, role, email, res };
+        const loaders = {
+          genreDataLoader,
+          userDataLoader,
+          productDataLoader,
+        };
+        return { id, role, email, res, loaders };
       },
     })
   );
