@@ -15,6 +15,18 @@ export enum RoleEnum {
   User = "User",
 }
 
+export enum OrderStatusEnum {
+  Pending = "Pending",
+  Paid = "Paid",
+  Shipped = "Shipped",
+  Completed = "Completed",
+  Canceled = "Canceled",
+}
+export enum ProductStatusEnum {
+  Active = "Active",
+  Removed = "Removed",
+}
+
 /**
  * Selector Options
  */

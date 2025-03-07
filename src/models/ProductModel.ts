@@ -1,4 +1,9 @@
-import { GradingEnum, MediaFormatEnum, ReleaseRegionEnum } from "@/utils/enums";
+import {
+  GradingEnum,
+  MediaFormatEnum,
+  ProductStatusEnum,
+  ReleaseRegionEnum,
+} from "@/utils/enums";
 import { Schema, model } from "mongoose";
 
 // TODO: how to add FK constraints?
@@ -55,6 +60,12 @@ const productSchema = new Schema(
           indexDisplay: { type: String, required: true },
         },
       ],
+    },
+    status: {
+      type: String,
+      enum: Object.values(ProductStatusEnum),
+      required: true,
+      default: ProductStatusEnum.Active,
     },
 
     // TODO: how to validate different Number types (Int, Float, ...)

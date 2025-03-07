@@ -9,7 +9,6 @@ import UserModel from "@/models/UserModel";
 import { GraphQLError } from "graphql";
 import { uploadImage } from "@/utils/imageUpload";
 import { FileUpload } from "graphql-upload/processRequest.mjs";
-import mongoose from "mongoose";
 import { GqlRouteContext } from "..";
 
 export const typeDefUser = `

@@ -12,17 +12,23 @@ import { uploadImages } from "@/utils/imageUpload";
 import {
   GradingEnum,
   MediaFormatEnum,
+  ProductStatusEnum,
   ReleaseYearRangeEnum,
   RoleEnum,
 } from "@/utils/enums";
 import { FileUpload } from "graphql-upload/processRequest.mjs";
-import mongoose, { ObjectId } from "mongoose";
+import mongoose from "mongoose";
 import { getYearRangeForMongoDB } from "@/utils/date";
 import { GqlRouteContext } from "..";
 
 export const typeDefProduct = `
   scalar ImageWithID
   scalar TrackList
+
+  enum ProductStatusEnum {
+    Active
+    Removed
+  }
 
   type Product {
     id: ID!
@@ -44,6 +50,7 @@ export const typeDefProduct = `
     images: [ImageWithID!]!
     tracklist: [TrackList!]
     description: String
+    status: ProductStatusEnum!
   }
 
   type ProductPagination {
@@ -110,7 +117,10 @@ export const resolversProduct = {
     ) => {
       try {
         checkRole(role, [RoleEnum.User]);
-        const products = await ProductModel.find({ userId: id });
+        const products = await ProductModel.find({
+          userId: id,
+          status: ProductStatusEnum.Active,
+        });
         return products;
       } catch (e) {
         gqlGenericError(e as Error);
@@ -122,7 +132,9 @@ export const resolversProduct = {
       { id, role }: { id: string; role: RoleEnum }
     ) => {
       try {
-        const products = await ProductModel.find()
+        const products = await ProductModel.find({
+          status: ProductStatusEnum.Active,
+        })
           .sort("-createdAt")
           .limit(count);
         return products;
@@ -130,7 +142,6 @@ export const resolversProduct = {
         gqlGenericError(e as Error);
       }
     },
-
     getNewVinyls: async (_: unknown, { count }: { count: number }) => {
       try {
         const products = await ProductModel.find({
@@ -141,6 +152,7 @@ export const resolversProduct = {
               MediaFormatEnum.Vinyl_12,
             ],
           },
+          status: ProductStatusEnum.Active,
         })
           .sort("-createdAt")
           .limit(count);
@@ -154,6 +166,7 @@ export const resolversProduct = {
       try {
         const products = await ProductModel.find({
           format: MediaFormatEnum.CD,
+          status: ProductStatusEnum.Active,
         })
           .sort("-createdAt")
           .limit(count);
@@ -167,6 +180,7 @@ export const resolversProduct = {
       try {
         const products = await ProductModel.find({
           format: MediaFormatEnum.Cassette,
+          status: ProductStatusEnum.Active,
         })
           .sort("-createdAt")
           .limit(count);
@@ -180,7 +194,7 @@ export const resolversProduct = {
       try {
         const endYear = new Date().getFullYear();
         let products = await ProductModel.aggregate([
-          { $match: { year: endYear } }, // filter the results
+          { $match: { year: endYear, status: ProductStatusEnum.Active } }, // filter the results
           { $sample: { size: count } },
         ]);
         if (products.length < count) {
@@ -198,7 +212,9 @@ export const resolversProduct = {
     getOldReleases: async (_: unknown, { count }: { count: number }) => {
       try {
         const products = await ProductModel.aggregate([
-          { $match: { year: { $lte: 1980 } } }, // filter the results
+          {
+            $match: { year: { $lte: 1980 }, status: ProductStatusEnum.Active },
+          }, // filter the results
           { $sample: { size: count } },
         ]);
         return products.map((a) => ({ ...a, id: a._id.toString() }));
@@ -209,7 +225,12 @@ export const resolversProduct = {
     getDiscounted: async (_: unknown, { count }: { count: number }) => {
       try {
         const products = await ProductModel.aggregate([
-          { $match: { discount: { $lte: 30 } } }, // filter the results
+          {
+            $match: {
+              discount: { $lte: 30 },
+              status: ProductStatusEnum.Active,
+            },
+          }, // filter the results
           { $sample: { size: count } },
         ]);
         return products.map((a) => ({ ...a, id: a._id.toString() }));
@@ -230,6 +251,11 @@ export const resolversProduct = {
               }, // Compute product
             },
           },
+          {
+            $match: {
+              status: ProductStatusEnum.Active,
+            },
+          },
           { $sort: { discountedPrice: 1 } }, // filter the results
           { $limit: count },
         ]);
@@ -242,7 +268,12 @@ export const resolversProduct = {
       try {
         // TODO:[1] need to include product, and find similar genres, artist etc...
         const products = await ProductModel.aggregate([
-          { $match: { grading: GradingEnum.Mint } }, // filter the results
+          {
+            $match: {
+              grading: GradingEnum.Mint,
+              status: ProductStatusEnum.Active,
+            },
+          }, // filter the results
           { $sample: { size: count } },
         ]);
         return products.map((a) => ({ ...a, id: a._id.toString() }));
@@ -253,6 +284,11 @@ export const resolversProduct = {
     getSimilar: async (_: unknown, { count }: { count: number }) => {
       try {
         const products = await ProductModel.aggregate([
+          {
+            $match: {
+              status: ProductStatusEnum.Active,
+            },
+          },
           { $sample: { size: count } },
         ]);
         return products.map((a) => ({ ...a, id: a._id.toString() }));
@@ -260,10 +296,12 @@ export const resolversProduct = {
         gqlGenericError(e as Error);
       }
     },
-
     getProductByUserId: async (_: unknown, { id }: { id: string }) => {
       try {
-        const products = await ProductModel.find({ userId: id });
+        const products = await ProductModel.find({
+          userId: id,
+          status: ProductStatusEnum.Active,
+        });
         return products;
       } catch (e) {
         gqlGenericError(e as Error);
@@ -297,7 +335,10 @@ export const resolversProduct = {
           year?: { $lt: number; $gte?: number | undefined };
           grading?: string;
           region?: string;
-        } = {};
+          status: ProductStatusEnum;
+        } = {
+          status: ProductStatusEnum.Active,
+        };
         if (filters.format) {
           query.format = filters.format;
         }
@@ -410,11 +451,9 @@ export const resolversProduct = {
       try {
         const product = await ProductModel.findById(id);
         if (!product) {
-          if (!product) {
-            throw new GraphQLError(`The product does not exist.`, {
-              extensions: gql_custom_code_bad_user_input,
-            });
-          }
+          throw new GraphQLError(`The product does not exist.`, {
+            extensions: gql_custom_code_bad_user_input,
+          });
         }
         return product;
         // const product = await ProductModel.aggregate([
@@ -603,8 +642,19 @@ export const resolversProduct = {
         checkRole(role, [RoleEnum.User]);
         checkIdMongooseValid(id);
 
-        const result = await ProductModel.deleteOne({ _id: id });
-        if (result.deletedCount === 0) {
+        // soft delete
+        const result = await ProductModel.findOneAndUpdate(
+          { _id: id },
+          {
+            status: ProductStatusEnum.Removed,
+          },
+          {
+            runValidators: true,
+            new: true,
+          }
+        );
+
+        if (!result) {
           throw new GraphQLError(`The product does not exist.`, {
             extensions: gql_custom_code_bad_user_input,
           });
