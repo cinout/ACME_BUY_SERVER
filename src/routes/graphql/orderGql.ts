@@ -2,13 +2,17 @@ import { RoleEnum } from "@/utils/enums";
 import {
   checkAccessRight,
   checkIdMongooseValid,
+  checkInputUpdateIsEmpty,
   checkRole,
   gql_custom_code_bad_user_input,
   gqlGenericError,
 } from "@/utils/gqlErrorResponse";
 import OrderModel from "@/models/OrderModel";
+import UserModel from "@/models/UserModel";
+import ProductModel from "@/models/ProductModel";
 import { GqlRouteContext } from "..";
 import { GraphQLError } from "graphql";
+import Order from "@/models/OrderModel";
 
 export const typeDefOrder = `
   scalar OrderItems
@@ -19,6 +23,19 @@ export const typeDefOrder = `
     Completed
     Canceled
   }
+
+  input UpdateOrdertInput {
+    status: OrderStatusEnum
+    shippingCountry: String
+    shippingState: String
+    shippingCity: String
+    shippingPostCode: String
+    shippingAddress: String
+    contactFirstname: String
+    contactLastname: String
+    contactPhone: String
+    contactEmail: String
+  }
   
   type Order {
     id: ID!
@@ -28,6 +45,20 @@ export const typeDefOrder = `
     itemDetails: [Product!]
     userId: ID!
     status: OrderStatusEnum!
+    shippingCountry: String
+    shippingState: String
+    shippingCity: String
+    shippingPostCode: String
+    shippingAddress: String
+    contactFirstname: String
+    contactLastname: String
+    contactPhone: String
+    contactEmail: String
+  }
+
+  type OnOrderComplete {
+    products: [Product!]!
+    user: User
   }
 
   extend type Query {
@@ -36,6 +67,8 @@ export const typeDefOrder = `
 
   extend type Mutation {
     initiateOrder(items: [OrderItems!]!): Order
+    updateOrder(id:ID!, input: UpdateOrdertInput!): Order
+    onOrderCompleted(id:ID!): OnOrderComplete
   }
 `;
 
@@ -99,6 +132,96 @@ export const resolverOrder = {
         });
 
         return newOrder;
+      } catch (error) {
+        gqlGenericError(error as Error);
+      }
+    },
+    updateOrder: async (
+      _: unknown,
+      { id: orderId, input }: { id: string; input: any },
+      { id: userId, role }: { id: string; role: RoleEnum }
+    ) => {
+      try {
+        checkRole(role, [RoleEnum.User]);
+        await checkAccessRight(userId, OrderModel, orderId, "userId");
+        checkInputUpdateIsEmpty(input);
+
+        // update order, e.g. status, shippingAddress
+        const updatedOrder = await OrderModel.findOneAndUpdate(
+          { _id: orderId },
+          input,
+          {
+            runValidators: true,
+            new: true,
+          }
+        );
+
+        if (!updatedOrder) {
+          throw new GraphQLError(`The order does not exist.`, {
+            extensions: gql_custom_code_bad_user_input,
+          });
+        } else {
+          return updatedOrder;
+        }
+      } catch (error) {
+        gqlGenericError(error as Error);
+      }
+    },
+    onOrderCompleted: async (
+      _: unknown,
+      { id: orderId }: { id: string },
+      { id: userId, role }: { id: string; role: RoleEnum }
+    ) => {
+      try {
+        checkRole(role, [RoleEnum.User]);
+        await checkAccessRight(userId, OrderModel, orderId, "userId");
+
+        // empty user's cart
+        const updatedUser = await UserModel.findOneAndUpdate(
+          { _id: userId },
+          { cart: [] },
+          {
+            runValidators: true,
+            new: true,
+          }
+        );
+        if (!updatedUser) {
+          throw new GraphQLError(`The user does not exist.`, {
+            extensions: gql_custom_code_bad_user_input,
+          });
+        }
+
+        // reduce stock for products in the order
+        const order = await OrderModel.findById(orderId);
+        if (!order) {
+          throw new GraphQLError(`The order does not exist.`, {
+            extensions: gql_custom_code_bad_user_input,
+          });
+        }
+        const orderItems = order.items;
+
+        const updatedProducts = await Promise.all(
+          orderItems.map(async ({ productId, quantity }) => {
+            return await ProductModel.findOneAndUpdate(
+              { _id: productId, stock: { $gte: quantity } },
+              { $inc: { stock: -quantity } },
+              {
+                runValidators: true,
+                new: true,
+              }
+            );
+          })
+        );
+        if (!updatedProducts) {
+          throw new GraphQLError(`Failed to reduce products' quantity.`, {
+            extensions: gql_custom_code_bad_user_input,
+          });
+        }
+
+        return {
+          products: updatedProducts,
+          user: updatedUser,
+        };
       } catch (error) {
         gqlGenericError(error as Error);
       }

@@ -17,7 +17,18 @@ const OrderSchema = new Schema(
       ],
       required: true,
     },
-    // totalAmount: { type: Number, required: true },
+
+    shippingCountry: { type: String },
+    shippingState: { type: String },
+    shippingCity: { type: String },
+    shippingPostCode: { type: String },
+    shippingAddress: { type: String },
+
+    contactFirstname: { type: String },
+    contactLastname: { type: String },
+    contactPhone: { type: String },
+    contactEmail: { type: String },
+
     // currency: { type: String, default: "USD" },
     // paymentMethod: { type: String, required: true },
     // paymentStatus: {
@@ -25,7 +36,6 @@ const OrderSchema = new Schema(
     //   enum: ["pending", "paid", "failed", "refunded"],
     //   default: "pending",
     // },
-    // transactionId: { type: String },
     // paymentDate: { type: Date },
 
     // shippingAddress: {
