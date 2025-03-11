@@ -21,6 +21,9 @@ import mongoose from "mongoose";
 import { getYearRangeForMongoDB } from "@/utils/date";
 import { GqlRouteContext } from "..";
 
+type MongoSortValue = 1 | -1 | { $meta: "textScore" };
+type SortValue = Record<string, MongoSortValue>;
+
 export const typeDefProduct = `
   scalar ImageWithID
   scalar TrackList
@@ -80,6 +83,7 @@ export const typeDefProduct = `
     year: String
     grading: String
     region: String
+    query: String
   }
 
   extend type Query {
@@ -324,41 +328,43 @@ export const resolversProduct = {
           year?: ReleaseYearRangeEnum;
           grading?: string;
           region?: string;
+          query?: string;
         };
       }
     ) => {
       try {
         // handle filters
-        const query: {
+        const contentFilter: {
           genreIds?: { $in: mongoose.Types.ObjectId[] };
           format?: string;
           year?: { $lt: number; $gte?: number | undefined };
           grading?: string;
           region?: string;
           status: ProductStatusEnum;
+          // $text?: { $search: string };
         } = {
           status: ProductStatusEnum.Active,
         };
         if (filters.format) {
-          query.format = filters.format;
+          contentFilter.format = filters.format;
         }
         if (filters.grading) {
-          query.grading = filters.grading;
+          contentFilter.grading = filters.grading;
         }
         if (filters.region) {
-          query.region = filters.region;
+          contentFilter.region = filters.region;
         }
         if (filters.year) {
-          query.year = getYearRangeForMongoDB(filters.year);
+          contentFilter.year = getYearRangeForMongoDB(filters.year);
         }
         if (filters.genre) {
-          query.genreIds = {
+          contentFilter.genreIds = {
             $in: [new mongoose.Types.ObjectId(filters.genre)],
           };
         }
 
         // handle sorting
-        let sortValue = null;
+        let sortValue: SortValue | null = null;
         switch (sorting) {
           case "added-desc": {
             sortValue = { createdAt: -1 };
@@ -401,15 +407,30 @@ export const resolversProduct = {
             // sortValue = "name";
             break;
           }
+          // "featured" option is ignored
         }
-        const count = await ProductModel.countDocuments(query);
 
-        // const products = await ProductModel.find(query)
-        //   .sort(sortValue)
-        //   .skip(skip)
-        //   .limit(take);
+        const finalQuery = filters.query?.trim();
+        const count = await ProductModel.countDocuments(
+          finalQuery
+            ? { $text: { $search: finalQuery }, ...contentFilter }
+            : contentFilter
+        );
 
+        let finalSort: SortValue | null = sortValue;
+        if (!sortValue && finalQuery) {
+          finalSort = { score: { $meta: "textScore" } };
+        }
+
+        // https://www.mongodb.com/docs/manual/reference/operator/aggregation/sort/#text-score-metadata-sort
         const products = await ProductModel.aggregate([
+          ...(finalQuery
+            ? [
+                {
+                  $match: { $text: { $search: finalQuery } },
+                },
+              ]
+            : []),
           {
             $addFields: {
               discountedPrice: {
@@ -420,8 +441,8 @@ export const resolversProduct = {
               }, // Compute product
             },
           },
-          { $match: query },
-          ...(sortValue ? [{ $sort: sortValue }] : []),
+          { $match: contentFilter },
+          ...(finalSort ? [{ $sort: finalSort }] : []),
           { $skip: skip },
           { $limit: take },
         ]);
@@ -429,14 +450,6 @@ export const resolversProduct = {
         const mappedProduct = products.map((a) => ({
           ...a,
           id: a._id.toString(),
-          // genres: a.genres.map((a: { _id: { toString: () => string } }) => ({
-          //   ...a,
-          //   id: a._id.toString(),
-          // })),
-          // user: {
-          //   ...a.user,
-          //   id: a.user._id.toString(),
-          // },
         }));
 
         return { products: mappedProduct, count };

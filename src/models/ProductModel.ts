@@ -89,5 +89,12 @@ productSchema.set("toJSON", {
   },
 });
 
+// create index for search query matching
+productSchema.index({
+  name: "text",
+  artist: "text",
+});
+// Product.syncIndexes();
+
 const Product = model("Product", productSchema);
 export default Product;
