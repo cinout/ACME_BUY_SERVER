@@ -13,6 +13,8 @@ const OrderSchema = new Schema(
             required: true,
           },
           quantity: { type: Number, required: true },
+          priceSnapshot: { type: Number },
+          discountSnapshot: { type: Number },
         },
       ],
       required: true,
@@ -28,6 +30,13 @@ const OrderSchema = new Schema(
     contactLastname: { type: String },
     contactPhone: { type: String },
     contactEmail: { type: String },
+
+    status: {
+      type: String,
+      enum: Object.values(OrderStatusEnum),
+      default: OrderStatusEnum.Pending,
+      required: true,
+    },
 
     // currency: { type: String, default: "USD" },
     // paymentMethod: { type: String, required: true },
@@ -55,12 +64,6 @@ const OrderSchema = new Schema(
     //   default: "pending",
     // },
 
-    status: {
-      type: String,
-      enum: Object.values(OrderStatusEnum),
-      default: OrderStatusEnum.Pending,
-      required: true,
-    },
     // cancelReason: { type: String },
 
     // discount: {
@@ -71,6 +74,9 @@ const OrderSchema = new Schema(
 
     // isGift: { type: Boolean, default: false },
     // giftMessage: { type: String },
+    // TODO: check
+    // createdAt: { type: Date },
+    // updatedAt: { type: Date },
   },
   { timestamps: true } // Automatically adds createdAt & updatedAt
 );

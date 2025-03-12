@@ -12,10 +12,10 @@ import UserModel from "@/models/UserModel";
 import ProductModel from "@/models/ProductModel";
 import { GqlRouteContext } from "..";
 import { GraphQLError } from "graphql";
-import Order from "@/models/OrderModel";
 
 export const typeDefOrder = `
   scalar OrderItems
+
   enum OrderStatusEnum {
     Pending
     Paid
@@ -35,6 +35,7 @@ export const typeDefOrder = `
     contactLastname: String
     contactPhone: String
     contactEmail: String
+    items: [OrderItems!]
   }
   
   type Order {
@@ -74,7 +75,7 @@ export const typeDefOrder = `
 
 export const resolverOrder = {
   Query: {
-    //
+    // get user's order information by orderId
     getOrderAndProductDetailsByOrderId: async (
       _: unknown,
       { id: orderId }: { id: string },
@@ -100,7 +101,7 @@ export const resolverOrder = {
   },
   Order: {
     itemDetails: async (
-      parent: { items: { productId: string; quantity: number }[] },
+      parent: { items: { productId: string }[] },
       _: void,
       { loaders }: GqlRouteContext
     ) => {
@@ -114,6 +115,7 @@ export const resolverOrder = {
     },
   },
   Mutation: {
+    // initiate an order (Pending)
     initiateOrder: async (
       _: unknown,
       { items }: { items: { productId: string; quantity: number }[] },
@@ -136,6 +138,7 @@ export const resolverOrder = {
         gqlGenericError(error as Error);
       }
     },
+    // update order
     updateOrder: async (
       _: unknown,
       { id: orderId, input }: { id: string; input: any },
@@ -167,6 +170,7 @@ export const resolverOrder = {
         gqlGenericError(error as Error);
       }
     },
+    // Pending -> Paid
     onOrderCompleted: async (
       _: unknown,
       { id: orderId }: { id: string },
@@ -199,7 +203,6 @@ export const resolverOrder = {
           });
         }
         const orderItems = order.items;
-
         const updatedProducts = await Promise.all(
           orderItems.map(async ({ productId, quantity }) => {
             return await ProductModel.findOneAndUpdate(

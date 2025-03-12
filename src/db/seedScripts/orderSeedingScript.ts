@@ -1,15 +1,13 @@
 import UserModel from "@/models/UserModel";
+import OrderModel from "@/models/OrderModel";
 import ProductModel from "@/models/ProductModel";
-import GenreModel from "@/models/GenreModel";
 import {
   selectRandomItemFromArray,
   selectRandomNItemsFromArray,
 } from "@/utils/array";
 import { faker } from "@faker-js/faker";
 import seedingScriptConnectDB from ".";
-import musicInfo from "@/utils/musicInfo.json";
-import { v7 } from "uuid";
-import { GradingEnum, MediaFormatEnum, ReleaseRegionEnum } from "@/utils/enums";
+import { OrderStatusEnum } from "@/utils/enums";
 import { getRandomDate } from "@/utils/date";
 
 seedingScriptConnectDB();
@@ -17,54 +15,68 @@ seedingScriptConnectDB();
 async function orderSeedingScript() {
   try {
     // get all Users
-    const allUsers = await UserModel.find().select("id");
+    const allUsers = await UserModel.find().select([
+      "id",
+      "country",
+      "state",
+      "city",
+      "zipCode",
+      "fistname",
+      "lastname",
+      "email",
+    ]);
     const allUserIds = allUsers.map((a) => a._id.toString());
 
-    // get all Genres
-    const allGenres = await GenreModel.find().select("id");
-    const allGenreIds = allGenres.map((a) => a._id.toString());
+    const allProducts = await ProductModel.find().select([
+      "id",
+      "price",
+      "discount",
+    ]);
 
-    // get all Music
-    const products = musicInfo.map((music) => {
-      const randomDate = getRandomDate(new Date("2023-01-01"), new Date());
+    const newOrders = allUsers.reduce((acc: unknown[], user) => {
+      // current user
+      const numOrders = faker.number.int({ min: 6, max: 22, multipleOf: 1 });
+      const userAddress = faker.location.streetAddress();
+      const userPhone = faker.phone.number();
 
-      return {
-        name: music.title,
-        artist: music.artist,
-        year: music.year,
-        images: music.images.map((a, i) => ({
-          id: v7(),
-          file: a,
-          name: `image ${i}`,
-        })),
-        tracklist: music.tracklist?.map((a) => ({
-          title: a.title,
-          indexDisplay: a.indexDisplay,
-        })),
-        format: selectRandomItemFromArray(Object.values(MediaFormatEnum)),
-        grading: selectRandomItemFromArray(Object.values(GradingEnum)),
-        region: selectRandomItemFromArray(Object.values(ReleaseRegionEnum)),
-        genreIds: selectRandomNItemsFromArray(
-          allGenreIds,
-          selectRandomItemFromArray([1, 2, 3])
-        ),
+      const ordersForCurrentUser = Array.from({ length: numOrders }, () => {
+        // each order for the current user
+        const randomDate = getRandomDate(new Date("2023-01-01"), new Date());
+        const randomNProducts = selectRandomNItemsFromArray(
+          allProducts,
+          faker.number.int({ min: 1, max: 8, multipleOf: 1 })
+        );
 
-        userId: selectRandomItemFromArray(allUserIds),
-        stock: faker.number.int({ min: 0, max: 6, multipleOf: 1 }),
-        price: faker.number.float({ min: 1, max: 100, multipleOf: 0.01 }),
-        discount:
-          Math.random() < 0.1
-            ? faker.number.float({ min: 0, max: 100, multipleOf: 0.1 })
-            : 0,
-        description: faker.lorem.paragraph({ min: 1, max: 8 }),
-        createdAt: randomDate,
-        updatedAt: randomDate,
-      };
-    });
+        return {
+          userId: user.id,
+          createdAt: randomDate,
+          updatedAt: randomDate,
+          items: randomNProducts.map((product) => ({
+            productId: product.id,
+            quantity: faker.number.int({ min: 1, max: 5, multipleOf: 1 }),
+            priceSnapshot: product.price,
+            discountSnapshot: product.discount,
+          })),
+          shippingCountry: user.country,
+          shippingState: user.state,
+          shippingCity: user.city,
+          shippingPostCode: user.zipCode,
+          shippingAddress: userAddress,
+          contactFirstname: user.firstname,
+          contactLastname: user.lastname,
+          contactEmail: user.email,
+          contactPhone: userPhone,
+          status: selectRandomItemFromArray(Object.values(OrderStatusEnum)),
+        };
+      });
+
+      return acc.concat(ordersForCurrentUser);
+    }, []);
 
     // insert data
-    await ProductModel.insertMany(products);
-    console.log("Product data are successfully inserted!");
+    console.log(newOrders[2]);
+    await OrderModel.insertMany(newOrders);
+    console.log("Order data are successfully inserted!");
   } catch (err) {
     console.error("Error while seeding data:", err);
   }
