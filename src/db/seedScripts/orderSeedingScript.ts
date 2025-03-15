@@ -7,7 +7,7 @@ import {
 } from "@/utils/array";
 import { faker } from "@faker-js/faker";
 import seedingScriptConnectDB from ".";
-import { OrderStatusEnum } from "@/utils/enums";
+import { OrderStatusEnum, RoleEnum } from "@/utils/enums";
 import { getRandomDate } from "@/utils/date";
 
 seedingScriptConnectDB();
@@ -15,7 +15,9 @@ seedingScriptConnectDB();
 async function orderSeedingScript() {
   try {
     // get all Users
-    const allUsers = await UserModel.find().select([
+    const allUsers = await UserModel.find({
+      role: { $ne: RoleEnum.Admin },
+    }).select([
       "id",
       "country",
       "state",
@@ -25,12 +27,12 @@ async function orderSeedingScript() {
       "lastname",
       "email",
     ]);
-    const allUserIds = allUsers.map((a) => a._id.toString());
 
     const allProducts = await ProductModel.find().select([
       "id",
       "price",
       "discount",
+      "userId",
     ]);
 
     const newOrders = allUsers.reduce((acc: unknown[], user) => {
@@ -39,11 +41,17 @@ async function orderSeedingScript() {
       const userAddress = faker.location.streetAddress();
       const userPhone = faker.phone.number();
 
+      // user cannot buy their own products
+      const availableProductsForUser = allProducts.filter(
+        (a) => a.userId.toString() !== user.id.toString()
+      );
+
       const ordersForCurrentUser = Array.from({ length: numOrders }, () => {
         // each order for the current user
         const randomDate = getRandomDate(new Date("2023-01-01"), new Date());
+
         const randomNProducts = selectRandomNItemsFromArray(
-          allProducts,
+          availableProductsForUser,
           faker.number.int({ min: 1, max: 8, multipleOf: 1 })
         );
 
@@ -74,7 +82,6 @@ async function orderSeedingScript() {
     }, []);
 
     // insert data
-    console.log(newOrders[2]);
     await OrderModel.insertMany(newOrders);
     console.log("Order data are successfully inserted!");
   } catch (err) {

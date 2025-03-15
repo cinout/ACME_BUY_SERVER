@@ -50,6 +50,7 @@ export const typeDefUser = `
     imageName: String!
     rating: Float!
     wishList: [ID!]!
+    wishListDetails: [Product!]!
     cart: [CartWithQuantity!]!
     cartDetails: [Product!]
   }
@@ -73,6 +74,7 @@ export const typeDefUser = `
     getCurrentUser: User!
     getCurrentUserCartDetails: User!
     getAllUsers: [User!]!
+    getCurrentUserWishListDetails: User!
     getUserById(id: ID!): User!
   }
   
@@ -122,6 +124,25 @@ export const resolversUser = {
         gqlGenericError(e as Error);
       }
     },
+    getCurrentUserWishListDetails: async (
+      _: unknown,
+      __: void,
+      { id, role }: { id: string; role: RoleEnum }
+    ) => {
+      try {
+        checkRole(role, [RoleEnum.User]);
+        const user = await UserModel.findById(id);
+        if (user) {
+          return user;
+        } else {
+          throw new GraphQLError(`The user does not exist.`, {
+            extensions: gql_custom_code_bad_user_input,
+          });
+        }
+      } catch (e) {
+        gqlGenericError(e as Error);
+      }
+    },
     getAllUsers: async (_: unknown, __: void, { role }: { role: RoleEnum }) => {
       try {
         checkRole(role, [RoleEnum.Admin]); // TODO:[1] see if you need to update
@@ -144,25 +165,6 @@ export const resolversUser = {
         gqlGenericError(e as Error);
       }
     },
-    // getSellerAndProducts: async (_: unknown, { id }: { id: string }) => {
-    //   try {
-    //     const seller = await UserModel.aggregate([
-    //       { $match: { _id: new mongoose.Types.ObjectId(id) } },
-    //       {
-    //         $lookup: {
-    //           from: "products", // Collection to join
-    //           localField: "_id",
-    //           foreignField: "userId",
-    //           as: "products",
-    //         },
-    //       },
-    //     ]);
-    //     console.log(seller);
-    //     // return seller;
-    //   } catch (e) {
-    //     gqlGenericError(e as Error);
-    //   }
-    // },
   },
   User: {
     cartDetails: async (
@@ -175,6 +177,19 @@ export const resolversUser = {
         // DataLoader batches them together in the same event loop cycle
         parent.cart.map((cartItem) =>
           loaders.productDataLoader.load(cartItem.productId)
+        )
+      );
+    },
+    wishListDetails: async (
+      parent: { wishList: string[] },
+      _: void,
+      { loaders }: GqlRouteContext
+    ) => {
+      return await Promise.all(
+        // queues all load() calls without waiting.
+        // DataLoader batches them together in the same event loop cycle
+        parent.wishList.map((productId) =>
+          loaders.productDataLoader.load(productId)
         )
       );
     },

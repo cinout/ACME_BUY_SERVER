@@ -1,21 +1,6 @@
-import UserModel from "@/models/UserModel";
 import ProductModel from "@/models/ProductModel";
-import GenreModel from "@/models/GenreModel";
-import {
-  selectRandomItemFromArray,
-  selectRandomNItemsFromArray,
-} from "@/utils/array";
-import { faker } from "@faker-js/faker";
 import seedingScriptConnectDB from ".";
-import musicInfo from "@/utils/musicInfo.json";
-import { v7 } from "uuid";
-import {
-  GradingEnum,
-  MediaFormatEnum,
-  ProductStatusEnum,
-  ReleaseRegionEnum,
-} from "@/utils/enums";
-import { getRandomDate } from "@/utils/date";
+import { ProductStatusEnum } from "@/utils/enums";
 
 seedingScriptConnectDB();
 

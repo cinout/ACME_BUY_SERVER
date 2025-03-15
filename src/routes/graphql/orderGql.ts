@@ -64,12 +64,14 @@ export const typeDefOrder = `
 
   extend type Query {
     getOrderAndProductDetailsByOrderId(id: ID!): Order
+    getOrderAndProductDetailsByCustomerId: [Order!]!
   }
 
   extend type Mutation {
     initiateOrder(items: [OrderItems!]!): Order
     updateOrder(id:ID!, input: UpdateOrdertInput!): Order
     onOrderCompleted(id:ID!): OnOrderComplete
+    deleteOrder(id: ID!): Boolean
   }
 `;
 
@@ -93,6 +95,23 @@ export const resolverOrder = {
             extensions: gql_custom_code_bad_user_input,
           });
         }
+        return order;
+      } catch (error) {
+        gqlGenericError(error as Error);
+      }
+    },
+    // get order history for customer
+    getOrderAndProductDetailsByCustomerId: async (
+      _: unknown,
+      __: void,
+      { id: userId, role }: { id: string; role: RoleEnum }
+    ) => {
+      try {
+        checkRole(role, [RoleEnum.User]);
+        checkIdMongooseValid(userId);
+
+        const order = await OrderModel.find({ userId: userId });
+
         return order;
       } catch (error) {
         gqlGenericError(error as Error);
@@ -227,6 +246,30 @@ export const resolverOrder = {
         };
       } catch (error) {
         gqlGenericError(error as Error);
+      }
+    },
+    deleteOrder: async (
+      _: unknown,
+      { id: orderId }: { id: string },
+      { id: userId, role }: { id: string; role: RoleEnum }
+    ) => {
+      try {
+        checkRole(role, [RoleEnum.User]);
+        checkIdMongooseValid(orderId);
+
+        await checkAccessRight(userId, OrderModel, orderId, "userId");
+
+        const result = await OrderModel.deleteOne({ _id: orderId });
+
+        if (result.deletedCount === 0) {
+          throw new GraphQLError(`The order does not exist.`, {
+            extensions: gql_custom_code_bad_user_input,
+          });
+        } else {
+          return true;
+        }
+      } catch (e) {
+        gqlGenericError(e as Error);
       }
     },
   },
