@@ -37,11 +37,6 @@ const userSchema = new Schema(
     city: { type: String },
     zipCode: { type: String },
     rating: { type: Number, default: 0, required: true },
-    wishList: {
-      type: [Schema.Types.ObjectId],
-      required: true,
-      default: [],
-    },
     cart: {
       type: [
         {

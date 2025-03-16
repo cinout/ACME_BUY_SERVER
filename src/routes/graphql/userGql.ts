@@ -6,6 +6,7 @@ import {
   gqlGenericError,
 } from "@/utils/gqlErrorResponse";
 import UserModel from "@/models/UserModel";
+import WishListModel from "@/models/WishListModel";
 import { GraphQLError } from "graphql";
 import { uploadImage } from "@/utils/imageUpload";
 import { FileUpload } from "graphql-upload/processRequest.mjs";
@@ -49,7 +50,7 @@ export const typeDefUser = `
     imageUrl: String!
     imageName: String!
     rating: Float!
-    wishList: [ID!]!
+    wishList: [WishList!]
     wishListDetails: [Product!]!
     cart: [CartWithQuantity!]!
     cartDetails: [Product!]
@@ -66,7 +67,6 @@ export const typeDefUser = `
     zipCode: String
     image: Upload
     rating: Float
-    wishList: [ID!]
     cart: [CartWithQuantity!]
   }
 
@@ -180,16 +180,23 @@ export const resolversUser = {
         )
       );
     },
+    wishList: async (parent: { id: string[] }, _: void) => {
+      const wishListItems = await WishListModel.find({ userId: parent.id });
+      return wishListItems;
+    },
+    // TODO:[3] update these two functions
     wishListDetails: async (
-      parent: { wishList: string[] },
+      parent: { id: string[] },
       _: void,
       { loaders }: GqlRouteContext
     ) => {
+      const wishListItems = await WishListModel.find({
+        userId: parent.id,
+      }).select(["productId"]);
+
       return await Promise.all(
-        // queues all load() calls without waiting.
-        // DataLoader batches them together in the same event loop cycle
-        parent.wishList.map((productId) =>
-          loaders.productDataLoader.load(productId)
+        wishListItems.map((item) =>
+          loaders.productDataLoader.load(item.productId as unknown as string)
         )
       );
     },

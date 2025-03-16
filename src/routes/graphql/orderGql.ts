@@ -75,7 +75,7 @@ export const typeDefOrder = `
   }
 `;
 
-export const resolverOrder = {
+export const resolversOrder = {
   Query: {
     // get user's order information by orderId
     getOrderAndProductDetailsByOrderId: async (

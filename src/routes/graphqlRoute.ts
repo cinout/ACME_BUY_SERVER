@@ -5,7 +5,8 @@ import { resolversProduct, typeDefProduct } from "@/routes/graphql/productGql";
 import { resolversUser, typeDefUser } from "@/routes/graphql/userGql";
 // import { resolversAdmin, typeDefAdmin } from "@/routes/graphql/adminGql";
 import { resolversAuth, typeDefAuth } from "./graphql/authGql";
-import { resolverOrder, typeDefOrder } from "./graphql/orderGql";
+import { resolversOrder, typeDefOrder } from "./graphql/orderGql";
+import { resolversWishList, typeDefWishList } from "./graphql/wishListGql";
 
 const typeDefQuery = `
   scalar Upload
@@ -28,13 +29,15 @@ export const gqlServer = new ApolloServer({
     typeDefUser,
     typeDefAuth,
     typeDefOrder,
+    typeDefWishList,
   ],
   resolvers: [
     resolversGenre,
     resolversProduct,
     resolversUser,
     resolversAuth,
-    resolverOrder,
+    resolversOrder,
+    resolversWishList,
   ],
   csrfPrevention: true, // TODO:[1] still not recommended: https://www.apollographql.com/blog/file-upload-best-practices
   cache: "bounded", // TODO: what does this mean?
