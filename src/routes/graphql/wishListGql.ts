@@ -1,6 +1,7 @@
 import { RoleEnum } from "@/utils/enums";
 import {
   checkAccessRight,
+  checkIdMongooseValid,
   checkRole,
   gql_custom_code_bad_user_input,
   gqlGenericError,
@@ -40,6 +41,8 @@ export const resolversWishList = {
     ) => {
       try {
         checkRole(role, [RoleEnum.User]);
+        checkIdMongooseValid(productId);
+        checkIdMongooseValid(userId);
         const newWishListItem = await WishListModel.create({
           productId,
           userId,
@@ -60,6 +63,8 @@ export const resolversWishList = {
     ) => {
       try {
         checkRole(role, [RoleEnum.User]);
+        checkIdMongooseValid(userId);
+        checkIdMongooseValid(wishListId);
         await checkAccessRight(userId, WishListModel, wishListId, "userId");
 
         const result = await WishListModel.deleteOne({ _id: wishListId });

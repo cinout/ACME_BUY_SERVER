@@ -121,6 +121,7 @@ export const resolversProduct = {
     ) => {
       try {
         checkRole(role, [RoleEnum.User]);
+        checkIdMongooseValid(id);
         const products = await ProductModel.find({
           userId: id,
           status: ProductStatusEnum.Active,
@@ -130,11 +131,7 @@ export const resolversProduct = {
         gqlGenericError(e as Error);
       }
     },
-    getNewestProducts: async (
-      _: unknown,
-      { count }: { count: number },
-      { id, role }: { id: string; role: RoleEnum }
-    ) => {
+    getNewestProducts: async (_: unknown, { count }: { count: number }) => {
       try {
         const products = await ProductModel.find({
           status: ProductStatusEnum.Active,
@@ -300,8 +297,10 @@ export const resolversProduct = {
         gqlGenericError(e as Error);
       }
     },
+    // called in shop page of a seller
     getProductByUserId: async (_: unknown, { id }: { id: string }) => {
       try {
+        checkIdMongooseValid(id);
         const products = await ProductModel.find({
           userId: id,
           status: ProductStatusEnum.Active,
@@ -457,11 +456,13 @@ export const resolversProduct = {
         gqlGenericError(e as Error);
       }
     },
+    // id is the product Id
     getProductAndRelatedDetailsById: async (
       _: unknown,
       { id }: { id: string }
     ) => {
       try {
+        checkIdMongooseValid(id);
         const product = await ProductModel.findById(id);
         if (!product) {
           throw new GraphQLError(`The product does not exist.`, {
@@ -523,6 +524,7 @@ export const resolversProduct = {
       _: void,
       { loaders }: GqlRouteContext
     ) => {
+      checkIdMongooseValid(parent.userId);
       const user = await loaders.userDataLoader.load(parent.userId);
       return user;
     },
@@ -579,6 +581,7 @@ export const resolversProduct = {
     ) => {
       try {
         checkRole(role, [RoleEnum.User]);
+        checkIdMongooseValid(id);
         const uploadResult = await uploadImages(images, "Products");
 
         const newProduct = await ProductModel.create({
@@ -617,12 +620,13 @@ export const resolversProduct = {
           }[];
         };
       },
-      { id: tokenId, role }: { id: string; role: RoleEnum }
+      { id: userId, role }: { id: string; role: RoleEnum }
     ) => {
       try {
         checkRole(role, [RoleEnum.User]);
         checkIdMongooseValid(id);
-        await checkAccessRight(tokenId, ProductModel, id, "userId");
+        checkIdMongooseValid(userId);
+        await checkAccessRight(userId, ProductModel, id, "userId");
         checkInputUpdateIsEmpty(input);
 
         if (input.images) {
@@ -649,11 +653,12 @@ export const resolversProduct = {
     deleteProduct: async (
       _: unknown,
       { id }: { id: string },
-      { role }: { role: RoleEnum }
+      { id: userId, role }: { id: string; role: RoleEnum }
     ) => {
       try {
         checkRole(role, [RoleEnum.User]);
         checkIdMongooseValid(id);
+        await checkAccessRight(userId, ProductModel, id, "userId");
 
         // soft delete
         const result = await ProductModel.findOneAndUpdate(

@@ -1,3 +1,4 @@
+import { nodeEnv } from "@/utils/config";
 import { RoleEnum } from "@/utils/enums";
 import { checkRole, gqlGenericError } from "@/utils/gqlErrorResponse";
 
@@ -21,7 +22,7 @@ export const resolversAuth = {
         checkRole(role, [RoleEnum.Admin, RoleEnum.User]);
         res.clearCookie("accessToken", {
           httpOnly: true,
-          secure: process.env.NODE_ENV === "production",
+          secure: nodeEnv === "production",
           sameSite: "strict" as const,
         });
         return "Log out successfully";

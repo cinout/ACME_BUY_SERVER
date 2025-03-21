@@ -4,17 +4,12 @@ import tseslint from "typescript-eslint";
 
 /** @type {import('eslint').Linter.Config[]} */
 export default tseslint.config({
-  files: ["**/*.{js,ts}"],
-  ignores: ["dist", "node_modules", "build"],
+  files: ["**/*.{js,ts}"], // tells ESLint to look at all JavaScript/TypeScript files in our project folder
+  ignores: ["dist", "node_modules", "build"], // do not check these files
   extends: [pluginJs.configs.recommended, ...tseslint.configs.recommended],
-  // env: {
-  //   node: true,
-  //   es2021: true,
-  // },
-
   languageOptions: {
-    ecmaVersion: 2021,
-    globals: globals.node,
+    ecmaVersion: "latest",
+    globals: globals.node, // specifies global variables that are predefined. It tells ESLint to include all global variables defined in the globals.node settings such as the process
     parserOptions: {
       sourceType: "module",
       project: "./tsconfig.json",
@@ -25,6 +20,4 @@ export default tseslint.config({
     "@typescript-eslint/no-unused-vars": ["warn", { argsIgnorePattern: "^_" }],
     "no-console": "warn",
   },
-  // parser: "@typescript-eslint/parser",
-  // plugins: ["@typescript-eslint"],
 });

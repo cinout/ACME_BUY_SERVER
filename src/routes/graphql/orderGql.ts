@@ -165,6 +165,8 @@ export const resolversOrder = {
     ) => {
       try {
         checkRole(role, [RoleEnum.User]);
+        checkIdMongooseValid(userId);
+        checkIdMongooseValid(orderId);
         await checkAccessRight(userId, OrderModel, orderId, "userId");
         checkInputUpdateIsEmpty(input);
 
@@ -197,6 +199,8 @@ export const resolversOrder = {
     ) => {
       try {
         checkRole(role, [RoleEnum.User]);
+        checkIdMongooseValid(userId);
+        checkIdMongooseValid(orderId);
         await checkAccessRight(userId, OrderModel, orderId, "userId");
 
         // empty user's cart
@@ -256,6 +260,7 @@ export const resolversOrder = {
       try {
         checkRole(role, [RoleEnum.User]);
         checkIdMongooseValid(orderId);
+        checkIdMongooseValid(userId);
 
         await checkAccessRight(userId, OrderModel, orderId, "userId");
 

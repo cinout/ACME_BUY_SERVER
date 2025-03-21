@@ -1,5 +1,6 @@
 import { RoleEnum, UserStatusEnum } from "@/utils/enums";
 import {
+  checkIdMongooseValid,
   checkInputUpdateIsEmpty,
   checkRole,
   gql_custom_code_bad_user_input,
@@ -93,6 +94,7 @@ export const resolversUser = {
     ) => {
       try {
         checkRole(role, [RoleEnum.User, RoleEnum.Admin]);
+        checkIdMongooseValid(id);
         const user = await UserModel.findById(id);
         if (user) {
           return user;
@@ -112,6 +114,7 @@ export const resolversUser = {
     ) => {
       try {
         checkRole(role, [RoleEnum.User, RoleEnum.Admin]);
+        checkIdMongooseValid(id);
         const user = await UserModel.findById(id);
         if (user) {
           return user;
@@ -131,6 +134,8 @@ export const resolversUser = {
     ) => {
       try {
         checkRole(role, [RoleEnum.User]);
+        checkIdMongooseValid(id);
+
         const user = await UserModel.findById(id);
         if (user) {
           return user;
@@ -154,6 +159,7 @@ export const resolversUser = {
     },
     getUserById: async (_: unknown, { id }: { id: string }) => {
       try {
+        checkIdMongooseValid(id);
         const user = await UserModel.findById(id);
         if (!user) {
           throw new GraphQLError(`The user does not exist.`, {
@@ -180,16 +186,18 @@ export const resolversUser = {
         )
       );
     },
-    wishList: async (parent: { id: string[] }, _: void) => {
+    wishList: async (parent: { id: string }, _: void) => {
+      checkIdMongooseValid(parent.id);
       const wishListItems = await WishListModel.find({ userId: parent.id });
       return wishListItems;
     },
     // TODO:[3] update these two functions
     wishListDetails: async (
-      parent: { id: string[] },
+      parent: { id: string },
       _: void,
       { loaders }: GqlRouteContext
     ) => {
+      checkIdMongooseValid(parent.id);
       const wishListItems = await WishListModel.find({
         userId: parent.id,
       }).select(["productId"]);
@@ -216,6 +224,7 @@ export const resolversUser = {
     ) => {
       try {
         checkRole(role, [RoleEnum.User]);
+        checkIdMongooseValid(id);
         checkInputUpdateIsEmpty(input);
 
         if (input.image) {
@@ -247,6 +256,7 @@ export const resolversUser = {
     ) => {
       try {
         checkRole(role, [RoleEnum.Admin]);
+        checkIdMongooseValid(userId);
 
         const result = await UserModel.findOneAndUpdate(
           { _id: userId },

@@ -1,11 +1,11 @@
-import express from "express";
-import "dotenv/config";
+import express, { Request, Response } from "express";
 import routes from "@/routes/index";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import connectDB from "@/db";
 import graphqlUploadExpress from "graphql-upload/graphqlUploadExpress.mjs";
 import { getAlbumCover } from "./utils/imageSamples";
+import { serverPort } from "./utils/config";
 
 // Database Setup
 connectDB(); // TODO: why I don't need to use await? Top-level 'await' expressions are only allowed when the 'module' option is set to 'es2022', 'esnext', 'system', 'node16', 'nodenext', or 'preserve', and the 'target' option is set to 'es2017' or higher
@@ -27,10 +27,16 @@ app.use(graphqlUploadExpress()); // Apply the GraphQL upload middleware before y
 // Routing
 app.use("/api", routes);
 
+// handler of request of unknown endpoints
+const unknownEndpoint = (request: Request, response: Response) => {
+  response.status(404).send({ error: "unknown endpoint" });
+};
+app.use(unknownEndpoint);
+
 // getAlbumCover(2500);
 
 // Listening
-const port = process.env.SERVER_PORT;
+const port = serverPort; // TODO:[1] set up the env when deployed to services
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
 });

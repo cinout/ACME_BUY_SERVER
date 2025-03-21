@@ -2,6 +2,7 @@ import { apiReponse } from "@/utils/apiReponse";
 import jwt from "jsonwebtoken";
 import { Request, Response, NextFunction } from "express";
 import { RoleEnum } from "@/utils/enums";
+import { authSecret } from "@/utils/config";
 
 export interface AuthenticatedRequest extends Request {
   id?: string;
@@ -26,7 +27,7 @@ async function authMiddleware(
     try {
       const tokenDecoded = jwt.verify(
         accessToken,
-        process.env.AUTH_SECRET as string
+        authSecret as string
       ) as Record<string, unknown>;
 
       req.id = tokenDecoded.id as string;

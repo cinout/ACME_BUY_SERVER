@@ -50,6 +50,7 @@ export const resolversGenre = {
     },
     getGenreById: async (_: unknown, { id }: { id: string }) => {
       try {
+        checkIdMongooseValid(id);
         const genre = await GenreModel.findById(id);
         if (!genre) {
           throw new GraphQLError(`The genre does not exist.`, {
