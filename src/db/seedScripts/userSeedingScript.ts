@@ -4,7 +4,6 @@ import { RoleEnum, UserSignupMethodEnum, UserStatusEnum } from "@/utils/enums";
 import { faker } from "@faker-js/faker";
 import { Country, State, City } from "country-state-city";
 import seedingScriptConnectDB from ".";
-import argon2 from "argon2";
 
 seedingScriptConnectDB();
 
@@ -12,9 +11,6 @@ async function userScript() {
   try {
     // Dummy Data
     const password = "12345678";
-    const pwEnc = await argon2.hash(password, {
-      type: argon2.argon2id,
-    });
 
     const allCountries = Country.getAllCountries();
 
@@ -39,7 +35,7 @@ async function userScript() {
         firstname: faker.person.firstName(),
         lastname: faker.person.lastName(),
         email: faker.internet.email(),
-        password: pwEnc,
+        password: password,
 
         status: UserStatusEnum.Active,
         signupMethod: UserSignupMethodEnum.Default,
@@ -62,10 +58,8 @@ async function userScript() {
       };
     });
 
-    console.log(userStats[2]);
-
     // Insert
-    await UserModel.insertMany(userStats);
+    await UserModel.create(userStats);
     console.log("User Data are successfully inserted!");
   } catch (err) {
     console.error("Error while seeding data:", err);

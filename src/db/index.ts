@@ -1,8 +1,16 @@
-import { db_name, db_port } from "@/utils/config";
+import config from "@/utils/config";
 import mongoose from "mongoose";
 
+// TODO:[3] a test database for test environment
+const MONGODB_URI =
+  process.env.NODE_ENV === "test"
+    ? `mongodb://127.0.0.1:${config.DATABASE_PORT}/${config.DATABASE_NAME_TEST}`
+    : process.env.NODE_ENV === "development"
+    ? `mongodb://127.0.0.1:${config.DATABASE_PORT}/${config.DATABASE_NAME_DEV}`
+    : `mongodb://127.0.0.1:${config.DATABASE_PORT}/${config.DATABASE_NAME_PROD}`;
+
 const connectDB = async () => {
-  await mongoose.connect(`mongodb://127.0.0.1:${db_port}/${db_name}`);
+  await mongoose.connect(MONGODB_URI);
   const db = mongoose.connection;
   db.once("open", () => console.log("Database connected successfully!"));
   db.on("error", console.error.bind(console, "Database connection error:"));

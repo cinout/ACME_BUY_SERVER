@@ -2,7 +2,7 @@
 
 ## 🙊 Description
 
-Backend code for ACME BUY
+Backend code for Swap Sound
 
 ## 🏃‍➡️ How to Run
 
@@ -43,3 +43,5 @@ Backend code for ACME BUY
 - [ ] delete image from cloudinary if image is removed
 - [ ] database password
 - [ ] FK constraint: (1) user:wishlist - product:id; (2) product.userId - user.id; (3) check all other Schema.Types.ObjectId in schema definition
+- [ ] To remove try-catch blocks in route handler, you can use express-async-errors library, see https://fullstackopen.com/en/part4/testing_the_backend#eliminating-the-try-catch for details. If an exception occurs in an async route, the execution is automatically passed to the error-handling middleware.
+- [ ]

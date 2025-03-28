@@ -1,17 +1,5 @@
-import musicInfo from "@/utils/musicInfo.json";
-
-const length = musicInfo.length;
-console.log("total length:", length);
-
-const newValues = musicInfo.map((a) => a.artist + " " + a.title + " " + a.year);
-const seen = new Set();
-const duplicates = new Set();
-for (const item of newValues) {
-  if (seen.has(item)) {
-    duplicates.add(item);
-  } else {
-    seen.add(item);
-  }
-}
-
-console.log(Array.from(duplicates));
+import argon2 from "argon2";
+const pw = argon2.hash("12345678", {
+  type: argon2.argon2id,
+});
+pw.then((a) => console.log(a));

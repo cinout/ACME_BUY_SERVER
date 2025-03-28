@@ -1,6 +1,5 @@
 import express from "express";
 import authController from "@/controllers/authController";
-import authMiddleware from "@/middlewares/authMiddleware";
 
 const router = express.Router();
 // TODO:[2] move them to graphql

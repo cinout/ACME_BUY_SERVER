@@ -82,6 +82,7 @@ userSchema.set("toJSON", {
     ret.id = ret._id.toString();
     delete ret._id;
     delete ret.__v; // Optional: Remove __v (version key)
+    delete ret.password; // The password should not be revealed
   },
 });
 
