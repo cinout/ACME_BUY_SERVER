@@ -1,1 +1,855 @@
-[]
+[
+  {
+    "artist": "Jason Scheff",
+    "title": "Here I Am",
+    "year": 2019,
+    "tracklist": [
+      {
+        "title": "Will You Still Love Me",
+        "indexDisplay": "1"
+      },
+      {
+        "title": "Here I Am",
+        "indexDisplay": "2"
+      },
+      {
+        "title": "Look Away",
+        "indexDisplay": "3"
+      },
+      {
+        "title": "Wonderful Day",
+        "indexDisplay": "4"
+      },
+      {
+        "title": "If You Only Knew",
+        "indexDisplay": "5"
+      },
+      {
+        "title": "Feelin’ Stronger Everyday",
+        "indexDisplay": "6"
+      },
+      {
+        "title": "What Kind of Man Would I Be?",
+        "indexDisplay": "7"
+      },
+      {
+        "title": "Never Even Had the Chance",
+        "indexDisplay": "8"
+      },
+      {
+        "title": "Hard to Say I’m Sorry",
+        "indexDisplay": "9"
+      },
+      {
+        "title": "Away",
+        "indexDisplay": "10"
+      }
+    ],
+    "images": [
+      "http://coverartarchive.org/release/7759c5d7-8547-43d1-92ab-6f3b6a6ae51c/31607269976.jpg"
+    ]
+  },
+  {
+    "artist": "Anne-Mari Kivimäki",
+    "title": "Ilja",
+    "year": 2018,
+    "tracklist": [
+      {
+        "title": "Ilja",
+        "indexDisplay": "1"
+      },
+      {
+        "title": "Kontokin kulmilla = on the Outskirts of Kontokki",
+        "indexDisplay": "2"
+      },
+      {
+        "title": "Ljuuli, Ljuuli & Raja = Lully, Lullay & Border",
+        "indexDisplay": "3"
+      },
+      {
+        "title": "Siitä alko pyhä = the Festival Begins",
+        "indexDisplay": "4"
+      },
+      {
+        "title": "Karjalan poikia Karjalassa = Karelian Boys in Karelia",
+        "indexDisplay": "5"
+      },
+      {
+        "title": "Anarkiaa Karjalassa = Anarchy in Karelia",
+        "indexDisplay": "6"
+      },
+      {
+        "title": "Pitkänvaaraan = to Pitkänvaara",
+        "indexDisplay": "7"
+      },
+      {
+        "title": "Kaivos 2.0 = the Mine 2.0",
+        "indexDisplay": "8"
+      },
+      {
+        "title": "Ajettih da Tsiganaiset",
+        "indexDisplay": "9"
+      }
+    ],
+    "images": [
+      "http://coverartarchive.org/release/591f2aca-c867-4aab-8aee-f9b95022c4c6/34123898279.jpg"
+    ]
+  },
+  {
+    "artist": "Anne-Mari Kivimäki",
+    "title": "Lakkautettu kylä",
+    "year": 2015,
+    "tracklist": [
+      {
+        "title": "Suistamon äänimaisema 2014",
+        "indexDisplay": "1"
+      },
+      {
+        "title": "Surua",
+        "indexDisplay": "2"
+      },
+      {
+        "title": "Elämää juoksuhaudoissa",
+        "indexDisplay": "3"
+      },
+      {
+        "title": "Ilja Kotikallio",
+        "indexDisplay": "4"
+      },
+      {
+        "title": "Lipitsä 2",
+        "indexDisplay": "5"
+      },
+      {
+        "title": "Surua",
+        "indexDisplay": "6"
+      },
+      {
+        "title": "Ljuuli",
+        "indexDisplay": "7"
+      },
+      {
+        "title": "Ilja Kotikallio",
+        "indexDisplay": "8"
+      },
+      {
+        "title": "Säkkijärven polkka",
+        "indexDisplay": "9"
+      },
+      {
+        "title": "Äänisen aallot",
+        "indexDisplay": "10"
+      },
+      {
+        "title": "Kaivos",
+        "indexDisplay": "11"
+      },
+      {
+        "title": "Rauha ja hiljaisuus",
+        "indexDisplay": "12"
+      }
+    ],
+    "images": [
+      "http://coverartarchive.org/release/cc749d53-f159-4d5f-a9b5-889c321891b9/15996636558.jpg",
+      "http://coverartarchive.org/release/cc749d53-f159-4d5f-a9b5-889c321891b9/15996638560.jpg",
+      "http://coverartarchive.org/release/cc749d53-f159-4d5f-a9b5-889c321891b9/15996639689.jpg",
+      "http://coverartarchive.org/release/cc749d53-f159-4d5f-a9b5-889c321891b9/15996640793.jpg"
+    ]
+  },
+  {
+    "artist": "Anne-Mari Kivimäki",
+    "title": "Hämeen Lauluja",
+    "year": 2019,
+    "tracklist": [
+      {
+        "title": "Killiäinen Lemmenlintu = The Bee Spell",
+        "indexDisplay": "1"
+      },
+      {
+        "title": "Kaarto - Karataan = Let's Elope",
+        "indexDisplay": "2"
+      },
+      {
+        "title": "Hyhkyn Tytöt = Hyhky Girls",
+        "indexDisplay": "3"
+      },
+      {
+        "title": "Ei Hauta Tää = Ain't No Grave",
+        "indexDisplay": "4"
+      },
+      {
+        "title": "Birckala 1981",
+        "indexDisplay": "5"
+      },
+      {
+        "title": "Surullinen Kirje = The Sad Letter",
+        "indexDisplay": "6"
+      },
+      {
+        "title": "Hämäläisten Mailla = On Häme Ground",
+        "indexDisplay": "7"
+      },
+      {
+        "title": "Iso Juhla = The Big Feast",
+        "indexDisplay": "8"
+      },
+      {
+        "title": "Kehtolaulu Suite = Lullaby Suite: Alkusoitto = Intro / Kehtolaulu = Lullaby / Saattomarssi = Funeral March / Tuu Tuu Tupakkarulla",
+        "indexDisplay": "9"
+      }
+    ],
+    "images": [
+      "http://coverartarchive.org/release/a20b8d44-bb3c-4346-a20c-f385ad66af20/31155860931.jpg",
+      "http://coverartarchive.org/release/a20b8d44-bb3c-4346-a20c-f385ad66af20/31155861764.jpg",
+      "http://coverartarchive.org/release/a20b8d44-bb3c-4346-a20c-f385ad66af20/31155862414.jpg",
+      "http://coverartarchive.org/release/a20b8d44-bb3c-4346-a20c-f385ad66af20/31155862969.jpg",
+      "http://coverartarchive.org/release/a20b8d44-bb3c-4346-a20c-f385ad66af20/31155863545.jpg",
+      "http://coverartarchive.org/release/a20b8d44-bb3c-4346-a20c-f385ad66af20/31155864130.jpg",
+      "http://coverartarchive.org/release/a20b8d44-bb3c-4346-a20c-f385ad66af20/31155864687.jpg",
+      "http://coverartarchive.org/release/a20b8d44-bb3c-4346-a20c-f385ad66af20/31155865434.jpg"
+    ]
+  },
+  {
+    "artist": "Jared “Dirty J” Watson",
+    "title": "Throw Back Music Vol.1 : The Curse Is Real",
+    "year": 2018,
+    "tracklist": [
+      {
+        "title": "DLK Will Kill You",
+        "indexDisplay": "1"
+      },
+      {
+        "title": "That Season",
+        "indexDisplay": "2"
+      },
+      {
+        "title": "My Pussy",
+        "indexDisplay": "3"
+      },
+      {
+        "title": "West Coastin It",
+        "indexDisplay": "4"
+      },
+      {
+        "title": "We Ride Bitch",
+        "indexDisplay": "5"
+      },
+      {
+        "title": "Break Her Neck",
+        "indexDisplay": "6"
+      },
+      {
+        "title": "Spray Thangz",
+        "indexDisplay": "7"
+      },
+      {
+        "title": "Disrespectful",
+        "indexDisplay": "8"
+      },
+      {
+        "title": "The DLK Trade",
+        "indexDisplay": "9"
+      },
+      {
+        "title": "Bad On Ya",
+        "indexDisplay": "10"
+      },
+      {
+        "title": "Real Song",
+        "indexDisplay": "11"
+      },
+      {
+        "title": "What We Do",
+        "indexDisplay": "12"
+      }
+    ],
+    "images": [
+      "http://coverartarchive.org/release/5bb56469-fe46-47ea-a683-0da2b7c93d37/24387695160.jpg"
+    ]
+  },
+  {
+    "artist": "The Verbiage",
+    "title": "Slightly Different",
+    "year": 2019,
+    "tracklist": [
+      {
+        "title": "What Word Can I Use?",
+        "indexDisplay": "1"
+      },
+      {
+        "title": "Slightly Different",
+        "indexDisplay": "2"
+      },
+      {
+        "title": "Very Quietly",
+        "indexDisplay": "3"
+      },
+      {
+        "title": "Join the Circle",
+        "indexDisplay": "4"
+      },
+      {
+        "title": "Bite the Beauty",
+        "indexDisplay": "5"
+      },
+      {
+        "title": "Occupied",
+        "indexDisplay": "6"
+      },
+      {
+        "title": "Honey",
+        "indexDisplay": "7"
+      },
+      {
+        "title": "The Sailor",
+        "indexDisplay": "8"
+      },
+      {
+        "title": "Point of View",
+        "indexDisplay": "9"
+      },
+      {
+        "title": "Into the Unknown",
+        "indexDisplay": "10"
+      },
+      {
+        "title": "The Sailor [Acoustic Version; Bonus Track]",
+        "indexDisplay": "11"
+      }
+    ],
+    "images": [
+      "http://coverartarchive.org/release/f9bde3ad-27e4-4975-be69-b8ccc601a8b8/23938426413.jpg"
+    ]
+  },
+  {
+    "artist": "The Verbiage",
+    "title": "But Who Knows What the Future Holds",
+    "year": 2023,
+    "tracklist": [
+      {
+        "title": "Mexico",
+        "indexDisplay": "1"
+      },
+      {
+        "title": "Blinded by Haze",
+        "indexDisplay": "2"
+      },
+      {
+        "title": "But Who Knows What the Future Holds",
+        "indexDisplay": "3"
+      },
+      {
+        "title": "Alt. Thing",
+        "indexDisplay": "4"
+      },
+      {
+        "title": "All I Wanna Do",
+        "indexDisplay": "5"
+      },
+      {
+        "title": "Under the Afternoon Sun",
+        "indexDisplay": "6"
+      },
+      {
+        "title": "Fireblaze",
+        "indexDisplay": "7"
+      },
+      {
+        "title": "Away",
+        "indexDisplay": "8"
+      },
+      {
+        "title": "Run",
+        "indexDisplay": "9"
+      },
+      {
+        "title": "Still in the Clouds",
+        "indexDisplay": "10"
+      },
+      {
+        "title": "Wonder of Consumerism",
+        "indexDisplay": "11"
+      },
+      {
+        "title": "Sway",
+        "indexDisplay": "12"
+      },
+      {
+        "title": "No Escape (All Alone)",
+        "indexDisplay": "13"
+      },
+      {
+        "title": "The Fall [Alternative Mix]",
+        "indexDisplay": "14"
+      }
+    ],
+    "images": [
+      "http://coverartarchive.org/release/f5402882-1229-46b8-8685-5985b1389223/36568169494.jpg"
+    ]
+  },
+  {
+    "artist": "E.S.P. Trio",
+    "title": "Pure Ecstasy",
+    "year": 2012,
+    "tracklist": [
+      {
+        "title": "Pure Ecstasy",
+        "indexDisplay": "1"
+      },
+      {
+        "title": "I Remember You",
+        "indexDisplay": "2"
+      },
+      {
+        "title": "I Thought About You",
+        "indexDisplay": "3"
+      },
+      {
+        "title": "Lush Life",
+        "indexDisplay": "4"
+      },
+      {
+        "title": "You Lighten Up My Life",
+        "indexDisplay": "5"
+      },
+      {
+        "title": "Some Gershwin Air",
+        "indexDisplay": "6"
+      },
+      {
+        "title": "What Is This Thing Called Love",
+        "indexDisplay": "7"
+      },
+      {
+        "title": "In Summer (Estate)",
+        "indexDisplay": "8"
+      },
+      {
+        "title": "The More I See You",
+        "indexDisplay": "9"
+      },
+      {
+        "title": "There Is No Greater Love",
+        "indexDisplay": "10"
+      },
+      {
+        "title": "When I Fall in Love",
+        "indexDisplay": "11"
+      }
+    ],
+    "images": [
+      "http://coverartarchive.org/release/3285a378-a8e5-46e9-a723-937db4581490/31895986827.jpg"
+    ]
+  },
+  {
+    "artist": "E.S.P. Trio",
+    "title": "Straight Ahead",
+    "year": 2005,
+    "tracklist": [
+      {
+        "title": "I Thought About You",
+        "indexDisplay": "1"
+      },
+      {
+        "title": "You Must Believe in Spring",
+        "indexDisplay": "2"
+      },
+      {
+        "title": "You Came (Vieste)",
+        "indexDisplay": "3"
+      },
+      {
+        "title": "Straight Ahead",
+        "indexDisplay": "4"
+      },
+      {
+        "title": "Like Someone in Love",
+        "indexDisplay": "5"
+      },
+      {
+        "title": "The Meaning of the Blues",
+        "indexDisplay": "6"
+      },
+      {
+        "title": "The Thrill Is Gone",
+        "indexDisplay": "7"
+      },
+      {
+        "title": "The Promise of You",
+        "indexDisplay": "8"
+      },
+      {
+        "title": "I've Never Been in Love Before",
+        "indexDisplay": "9"
+      },
+      {
+        "title": "So Many Stars",
+        "indexDisplay": "10"
+      },
+      {
+        "title": "You",
+        "indexDisplay": "11"
+      }
+    ],
+    "images": [
+      "http://coverartarchive.org/release/4644b620-75ed-483c-8a6a-1a9c40dd38c6/18311571918.jpg",
+      "http://coverartarchive.org/release/4644b620-75ed-483c-8a6a-1a9c40dd38c6/18311569812.jpg"
+    ]
+  },
+  {
+    "artist": "Dick Hyman & His Orchestra",
+    "title": "Fabulous",
+    "year": 1963,
+    "tracklist": [
+      {
+        "title": "Washington Square",
+        "indexDisplay": "A1"
+      },
+      {
+        "title": "Danke Schoen",
+        "indexDisplay": "A2"
+      },
+      {
+        "title": "I’ll Be Around",
+        "indexDisplay": "A3"
+      },
+      {
+        "title": "Wives & Lovers",
+        "indexDisplay": "A4"
+      },
+      {
+        "title": "Sonny Boy",
+        "indexDisplay": "A5"
+      },
+      {
+        "title": "What’d I Say",
+        "indexDisplay": "A6"
+      },
+      {
+        "title": "S’posin’",
+        "indexDisplay": "B1"
+      },
+      {
+        "title": "So Easy",
+        "indexDisplay": "B2"
+      },
+      {
+        "title": "The Best Is Yet to Come",
+        "indexDisplay": "B3"
+      },
+      {
+        "title": "I’ll Remember April",
+        "indexDisplay": "B4"
+      },
+      {
+        "title": "Living on Borrowed Time",
+        "indexDisplay": "B5"
+      },
+      {
+        "title": "Mr. Lucky",
+        "indexDisplay": "B6"
+      }
+    ],
+    "images": [
+      "http://coverartarchive.org/release/99a6a387-1026-4ba9-a44d-82af1a5fe642/10617356362.jpg"
+    ]
+  },
+  {
+    "artist": "Dick Hyman & His Orchestra",
+    "title": "Provocative Piano",
+    "year": 1960,
+    "tracklist": [
+      {
+        "title": "Cumana",
+        "indexDisplay": "1"
+      },
+      {
+        "title": "Near You",
+        "indexDisplay": "2"
+      },
+      {
+        "title": "Polonaise",
+        "indexDisplay": "3"
+      },
+      {
+        "title": "Autumn Leaves",
+        "indexDisplay": "4"
+      },
+      {
+        "title": "Tschaikowsky's Piano Concerto",
+        "indexDisplay": "5"
+      },
+      {
+        "title": "Canadian Sunset",
+        "indexDisplay": "6"
+      },
+      {
+        "title": "Warsaw Concerto",
+        "indexDisplay": "7"
+      },
+      {
+        "title": "Sunrise Serenade",
+        "indexDisplay": "8"
+      },
+      {
+        "title": "Miserlou",
+        "indexDisplay": "9"
+      },
+      {
+        "title": "Chopin Nocturne",
+        "indexDisplay": "10"
+      },
+      {
+        "title": "Nola",
+        "indexDisplay": "11"
+      },
+      {
+        "title": "Autumn Nocturne",
+        "indexDisplay": "12"
+      }
+    ],
+    "images": [
+      "http://coverartarchive.org/release/3da03988-1469-4d4c-a516-155419139d74/28303905550.jpg",
+      "http://coverartarchive.org/release/3da03988-1469-4d4c-a516-155419139d74/28303906069.jpg",
+      "http://coverartarchive.org/release/3da03988-1469-4d4c-a516-155419139d74/28303906691.jpg",
+      "http://coverartarchive.org/release/3da03988-1469-4d4c-a516-155419139d74/28303907345.jpg",
+      "http://coverartarchive.org/release/3da03988-1469-4d4c-a516-155419139d74/28303907811.jpg",
+      "http://coverartarchive.org/release/3da03988-1469-4d4c-a516-155419139d74/28303908346.jpg"
+    ]
+  },
+  {
+    "artist": "Dick Hyman & His Orchestra",
+    "title": "Electrodynamics",
+    "year": 1963,
+    "tracklist": [
+      {
+        "title": "Stompin' at the Savoy",
+        "indexDisplay": "A1"
+      },
+      {
+        "title": "The Sweetest Sound",
+        "indexDisplay": "A2"
+      },
+      {
+        "title": "I Left My Heart in San Francisco",
+        "indexDisplay": "A3"
+      },
+      {
+        "title": "Fly Me to the Moon",
+        "indexDisplay": "A4"
+      },
+      {
+        "title": "Paradise",
+        "indexDisplay": "A5"
+      },
+      {
+        "title": "Side by Side",
+        "indexDisplay": "A6"
+      },
+      {
+        "title": "Mack the Knife",
+        "indexDisplay": "B1"
+      },
+      {
+        "title": "Satin Doll",
+        "indexDisplay": "B2"
+      },
+      {
+        "title": "Shadowland",
+        "indexDisplay": "B3"
+      },
+      {
+        "title": "Big Ben Bossa",
+        "indexDisplay": "B4"
+      },
+      {
+        "title": "This Is All I Ask",
+        "indexDisplay": "B5"
+      },
+      {
+        "title": "Till We Meet Again",
+        "indexDisplay": "B6"
+      }
+    ],
+    "images": [
+      "http://coverartarchive.org/release/6d0cdbf9-1b79-4f8c-97b1-140fe0b08adf/23559260844.jpg",
+      "http://coverartarchive.org/release/6d0cdbf9-1b79-4f8c-97b1-140fe0b08adf/23559261213.jpg",
+      "http://coverartarchive.org/release/6d0cdbf9-1b79-4f8c-97b1-140fe0b08adf/23559261487.jpg",
+      "http://coverartarchive.org/release/6d0cdbf9-1b79-4f8c-97b1-140fe0b08adf/23559261801.jpg",
+      "http://coverartarchive.org/release/6d0cdbf9-1b79-4f8c-97b1-140fe0b08adf/23559262067.jpg",
+      "http://coverartarchive.org/release/6d0cdbf9-1b79-4f8c-97b1-140fe0b08adf/23559262388.jpg"
+    ]
+  },
+  {
+    "artist": "Blacktop",
+    "title": "Up All Night",
+    "year": 1994,
+    "tracklist": [
+      {
+        "title": "I Think It's Going To Rain",
+        "indexDisplay": "A1"
+      },
+      {
+        "title": "Tornado Love",
+        "indexDisplay": "A2"
+      },
+      {
+        "title": "Here I Am, I Always Am",
+        "indexDisplay": "A3"
+      },
+      {
+        "title": "44 Blues",
+        "indexDisplay": "A4"
+      },
+      {
+        "title": "Planet Earth (Goddamn)",
+        "indexDisplay": "A5"
+      },
+      {
+        "title": "Bahia",
+        "indexDisplay": "A6"
+      },
+      {
+        "title": "Mojo Kitty",
+        "indexDisplay": "B1"
+      },
+      {
+        "title": "Keep On Doggin' Me",
+        "indexDisplay": "B2"
+      },
+      {
+        "title": "Let Me Go Home, Whiskey",
+        "indexDisplay": "B3"
+      },
+      {
+        "title": "Blazing Streets",
+        "indexDisplay": "B4"
+      },
+      {
+        "title": "Goin'",
+        "indexDisplay": "B5"
+      },
+      {
+        "title": "She's Mine, All Mine",
+        "indexDisplay": "B6"
+      }
+    ],
+    "images": [
+      "http://coverartarchive.org/release/eb640ff6-a47e-4eac-bc89-147e85aa0b3b/12983447970.jpg"
+    ]
+  },
+  {
+    "artist": "Blacktop",
+    "title": "I Got a Baad Feelin’ About This",
+    "year": 2003,
+    "tracklist": [
+      {
+        "title": "Blacktop (Intro)",
+        "indexDisplay": "1"
+      },
+      {
+        "title": "Tornado Love",
+        "indexDisplay": "2"
+      },
+      {
+        "title": "I Think It’s Going to Rain",
+        "indexDisplay": "3"
+      },
+      {
+        "title": "Planet Earth",
+        "indexDisplay": "4"
+      },
+      {
+        "title": "Mojo Kitty",
+        "indexDisplay": "5"
+      },
+      {
+        "title": "Blazing Streets",
+        "indexDisplay": "6"
+      },
+      {
+        "title": "From Beyond",
+        "indexDisplay": "7"
+      },
+      {
+        "title": "Here I Am I Always Am",
+        "indexDisplay": "8"
+      },
+      {
+        "title": "Confusion",
+        "indexDisplay": "9"
+      },
+      {
+        "title": "The Grave",
+        "indexDisplay": "10"
+      },
+      {
+        "title": "No One Knows You’re a Dog",
+        "indexDisplay": "11"
+      },
+      {
+        "title": "Flagpole Hill",
+        "indexDisplay": "12"
+      },
+      {
+        "title": "Your Pretty Face (Is Going to Waukeegan)",
+        "indexDisplay": "13"
+      },
+      {
+        "title": "Blacktop (Outro)",
+        "indexDisplay": "14"
+      },
+      {
+        "title": "Hot Lips and Swivel Hips",
+        "indexDisplay": "15"
+      },
+      {
+        "title": "Searchin’",
+        "indexDisplay": "16"
+      },
+      {
+        "title": "44 Blues",
+        "indexDisplay": "17"
+      },
+      {
+        "title": "Bahia",
+        "indexDisplay": "18"
+      },
+      {
+        "title": "Keep on Doggin’ Me",
+        "indexDisplay": "19"
+      },
+      {
+        "title": "Let Me Go Home, Whiskey",
+        "indexDisplay": "20"
+      },
+      {
+        "title": "Goin’",
+        "indexDisplay": "21"
+      },
+      {
+        "title": "She’s Mine All Mine",
+        "indexDisplay": "22"
+      },
+      {
+        "title": "Hide and Go Seek, Part 1",
+        "indexDisplay": "23"
+      },
+      {
+        "title": "Hide and Go Seek, Part 2",
+        "indexDisplay": "24"
+      },
+      {
+        "title": "Self‐Destruct Sequence",
+        "indexDisplay": "25"
+      },
+      {
+        "title": "Baby",
+        "indexDisplay": "26"
+      }
+    ],
+    "images": [
+      "http://coverartarchive.org/release/09af4148-5594-4dd6-8798-76efbda14eac/15980067946.jpg"
+    ]
+  }
+]

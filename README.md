@@ -44,4 +44,4 @@ Backend code for Swap Sound
 - [ ] database password
 - [ ] FK constraint: (1) user:wishlist - product:id; (2) product.userId - user.id; (3) check all other Schema.Types.ObjectId in schema definition
 - [ ] To remove try-catch blocks in route handler, you can use express-async-errors library, see https://fullstackopen.com/en/part4/testing_the_backend#eliminating-the-try-catch for details. If an exception occurs in an async route, the execution is automatically passed to the error-handling middleware.
-- [ ]
+- [ ]check all the usages of unknown type, and type assertion with "as ...". Apply the same to front-end code.

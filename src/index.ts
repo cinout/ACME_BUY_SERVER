@@ -3,7 +3,7 @@ import config from "./utils/config";
 import app from "./app";
 import logger from "./utils/logger";
 
-// getAlbumCover(2500);
+// getAlbumCover(200);
 
 // TODO:[2] use logger for all the console.XXX()
 
