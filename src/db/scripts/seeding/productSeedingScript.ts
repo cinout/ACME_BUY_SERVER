@@ -6,13 +6,13 @@ import {
   selectRandomNItemsFromArray,
 } from "@/utils/array";
 import { faker } from "@faker-js/faker";
-import seedingScriptConnectDB from ".";
+
 import musicInfo from "@/utils/musicInfo.json";
 import { v7 } from "uuid";
 import { GradingEnum, MediaFormatEnum, ReleaseRegionEnum } from "@/utils/enums";
 import { getRandomDate } from "@/utils/date";
-
-seedingScriptConnectDB();
+import connectDB from "@/db";
+await connectDB();
 
 async function productScript() {
   try {

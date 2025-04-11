@@ -12,6 +12,11 @@ const OrderSchema = new Schema(
             ref: "Product",
             required: true,
           },
+          sellerId: {
+            type: Schema.Types.ObjectId,
+            ref: "User",
+            required: true,
+          },
           quantity: { type: Number, required: true },
           priceSnapshot: { type: Number },
           discountSnapshot: { type: Number },
@@ -74,7 +79,7 @@ const OrderSchema = new Schema(
 
     // isGift: { type: Boolean, default: false },
     // giftMessage: { type: String },
-    // TODO: check
+    // TODO:[1] check
     // createdAt: { type: Date },
     // updatedAt: { type: Date },
   },

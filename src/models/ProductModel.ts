@@ -6,7 +6,7 @@ import {
 } from "@/utils/enums";
 import { Schema, model } from "mongoose";
 
-// TODO: how to add FK constraints?
+// TODO:[3] how to add FK constraints?
 const productSchema = new Schema(
   {
     // Required
@@ -68,11 +68,11 @@ const productSchema = new Schema(
       default: ProductStatusEnum.Active,
     },
 
-    // TODO: how to validate different Number types (Int, Float, ...)
+    // TODO:[1] how to validate different Number types (Int, Float, ...)
 
     // Optional
     description: { type: String },
-    // TODO: check
+    // TODO:[1] check
     // createdAt: { type: Date },
     // updatedAt: { type: Date },
   },

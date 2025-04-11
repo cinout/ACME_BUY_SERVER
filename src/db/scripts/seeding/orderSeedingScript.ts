@@ -6,11 +6,12 @@ import {
   selectRandomNItemsFromArray,
 } from "@/utils/array";
 import { faker } from "@faker-js/faker";
-import seedingScriptConnectDB from ".";
 import { OrderStatusEnum, RoleEnum } from "@/utils/enums";
 import { getRandomDate } from "@/utils/date";
+import connectDB from "@/db";
 
-seedingScriptConnectDB();
+// Database Setup
+await connectDB();
 
 async function orderSeedingScript() {
   try {
@@ -55,15 +56,22 @@ async function orderSeedingScript() {
           faker.number.int({ min: 1, max: 8, multipleOf: 1 })
         );
 
+        const orderStatus = selectRandomItemFromArray(
+          Object.values(OrderStatusEnum)
+        );
+
         return {
           userId: user.id,
           createdAt: randomDate,
           updatedAt: randomDate,
           items: randomNProducts.map((product) => ({
             productId: product.id,
+            sellerId: product.userId,
             quantity: faker.number.int({ min: 1, max: 5, multipleOf: 1 }),
-            priceSnapshot: product.price,
-            discountSnapshot: product.discount,
+            priceSnapshot:
+              orderStatus === OrderStatusEnum.Pending ? null : product.price,
+            discountSnapshot:
+              orderStatus === OrderStatusEnum.Pending ? null : product.discount,
           })),
           shippingCountry: user.country,
           shippingState: user.state,
@@ -74,7 +82,7 @@ async function orderSeedingScript() {
           contactLastname: user.lastname,
           contactEmail: user.email,
           contactPhone: userPhone,
-          status: selectRandomItemFromArray(Object.values(OrderStatusEnum)),
+          status: orderStatus,
         };
       });
 

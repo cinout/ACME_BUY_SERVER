@@ -5,9 +5,9 @@ import mongoose from "mongoose";
 const MONGODB_URI =
   process.env.NODE_ENV === "test"
     ? `mongodb://127.0.0.1:${config.DATABASE_PORT}/${config.DATABASE_NAME_TEST}`
-    : process.env.NODE_ENV === "development"
-    ? `mongodb://127.0.0.1:${config.DATABASE_PORT}/${config.DATABASE_NAME_DEV}`
-    : `mongodb://127.0.0.1:${config.DATABASE_PORT}/${config.DATABASE_NAME_PROD}`;
+    : process.env.NODE_ENV === "production"
+    ? `mongodb://127.0.0.1:${config.DATABASE_PORT}/${config.DATABASE_NAME_PROD}`
+    : `mongodb://127.0.0.1:${config.DATABASE_PORT}/${config.DATABASE_NAME_DEV}`;
 
 const connectDB = async () => {
   await mongoose.connect(MONGODB_URI);

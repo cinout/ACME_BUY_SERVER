@@ -1,12 +1,11 @@
-import seedingScriptConnectDB from ".";
 import ProductModel from "@/models/ProductModel";
 import UserModel from "@/models/UserModel";
 import WishListModel from "@/models/WishListModel";
 import { selectRandomNItemsFromArray } from "@/utils/array";
 import { RoleEnum } from "@/utils/enums";
 import { faker } from "@faker-js/faker";
-
-seedingScriptConnectDB();
+import connectDB from "@/db";
+await connectDB();
 
 async function userScript() {
   try {

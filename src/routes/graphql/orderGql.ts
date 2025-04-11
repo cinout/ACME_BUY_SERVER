@@ -137,7 +137,9 @@ export const resolversOrder = {
     // initiate an order (Pending)
     initiateOrder: async (
       _: unknown,
-      { items }: { items: { productId: string; quantity: number }[] },
+      {
+        items,
+      }: { items: { productId: string; sellerId: string; quantity: number }[] },
       { id, role }: { id: string; role: RoleEnum }
     ) => {
       try {
@@ -148,6 +150,7 @@ export const resolversOrder = {
           userId: id,
           items: items.map((a) => ({
             productId: a.productId,
+            sellerId: a.sellerId,
             quantity: a.quantity,
           })),
         });

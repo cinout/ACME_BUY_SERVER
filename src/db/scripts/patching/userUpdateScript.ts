@@ -1,7 +1,6 @@
 import UserModel from "@/models/UserModel";
-import seedingScriptConnectDB from ".";
-
-seedingScriptConnectDB();
+import connectDB from "@/db";
+await connectDB();
 
 async function userUpdate() {
   try {

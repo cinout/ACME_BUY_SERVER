@@ -3,9 +3,8 @@ import { selectRandomItemFromArray } from "@/utils/array";
 import { RoleEnum, UserSignupMethodEnum, UserStatusEnum } from "@/utils/enums";
 import { faker } from "@faker-js/faker";
 import { Country, State, City } from "country-state-city";
-import seedingScriptConnectDB from ".";
-
-seedingScriptConnectDB();
+import connectDB from "@/db";
+await connectDB();
 
 async function userScript() {
   try {

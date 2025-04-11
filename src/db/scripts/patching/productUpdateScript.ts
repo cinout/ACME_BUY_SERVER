@@ -1,8 +1,8 @@
 import ProductModel from "@/models/ProductModel";
-import seedingScriptConnectDB from ".";
-import { ProductStatusEnum } from "@/utils/enums";
 
-seedingScriptConnectDB();
+import { ProductStatusEnum } from "@/utils/enums";
+import connectDB from "@/db";
+await connectDB();
 
 async function productScript() {
   try {
