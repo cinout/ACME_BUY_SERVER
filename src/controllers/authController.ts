@@ -26,7 +26,7 @@ export default class authController {
         signupMethod,
         status: UserStatusEnum.Pending,
         imageName: "default_avatar.png",
-        imageUrl: randomDefaultImage(), // TODO:[2] update the default image
+        imageUrl: randomDefaultImage(), // TODO:[3] update the default image
         role: RoleEnum.User,
       });
 
@@ -40,7 +40,7 @@ export default class authController {
       return apiReponse(res, 201, {
         message: "New user successfully created.",
         accessToken,
-      }); // TODO: remove accessToken later, not recommended
+      }); // TODO:[1] remove accessToken later, not recommended
     } catch (e) {
       return apiReponseGeneralError(res, e as Error);
     }
@@ -66,7 +66,7 @@ export default class authController {
           res.cookie("accessToken", accessToken, cookieOptions);
           return apiReponse(res, 200, {
             message: "Login success.",
-            accessToken, // TODO: remove accessToken later, not recommended
+            accessToken, // TODO:[1] remove accessToken later, not recommended
           });
         } else {
           return apiReponse(res, 404, { error: "Password does not match." });

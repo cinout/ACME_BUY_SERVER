@@ -8,7 +8,7 @@ import logger from "./utils/logger";
 // TODO:[2] use logger for all the console.XXX()
 
 // Listening
-const port = config.SERVER_PORT; // TODO:[1] set up the env when deployed to services
+const port = config.SERVER_PORT; // TODO:[3] set up the env when deployed to services
 app.listen(port, () => {
   logger.info(`Server is running on http://localhost:${port}`);
 });

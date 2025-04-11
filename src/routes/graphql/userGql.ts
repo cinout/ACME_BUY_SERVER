@@ -191,7 +191,6 @@ export const resolversUser = {
       const wishListItems = await WishListModel.find({ userId: parent.id });
       return wishListItems;
     },
-    // TODO:[3] update these two functions
     wishListDetails: async (
       parent: { id: string },
       _: void,

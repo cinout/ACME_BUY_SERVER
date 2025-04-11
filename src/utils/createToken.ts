@@ -15,7 +15,7 @@ export const cookieOptions = {
   httpOnly: true, // Prevents the cookie from being accessed via JavaScript (enhanced security)
   secure: config.NODE_ENV === "production", // Ensures the cookie is only sent over HTTPS in production
   sameSite: "strict" as const, // telling TypeScript that "strict" is a literal value // Prevents the cookie from being sent with cross-origin requests
-  // TODO: add domain property?
+  // TODO:[3] add domain property?
 };
 
 export default createToken;

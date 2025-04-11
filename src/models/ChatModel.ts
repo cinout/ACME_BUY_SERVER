@@ -14,7 +14,7 @@ const ChatSchema = new Schema(
     },
     unreadCount: { type: Number, default: 0 },
 
-    // TODO: check
+    // TODO:[1] check
     // createdAt: { type: Date },
     // updatedAt: { type: Date },
   },

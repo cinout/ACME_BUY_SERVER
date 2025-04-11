@@ -9,6 +9,6 @@ export const apiReponse = (
 };
 
 export const apiReponseGeneralError = (res: Response, err: Error) => {
-  // TODO: should return a general message in PRD environment
+  // TODO:[3] should return a general message in PRD environment
   return res.status(500).json({ error: err.message });
 };

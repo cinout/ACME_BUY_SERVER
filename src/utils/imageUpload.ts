@@ -13,7 +13,7 @@ export async function uploadImage(
     const stream = createReadStream();
     return { imageUrl: randomDefaultImage(), imageName: image.name };
 
-    // // TODO: remove comment
+    // // TODO:[3] remove comment
     // const uploadResult = (await new Promise((resolve, reject) => {
     //   const uploadStream = cloudinary.uploader.upload_stream(
     //     { folder }, // Optional: specify a folder in your Cloudinary account
@@ -45,7 +45,7 @@ export async function uploadImages(
       return new Promise((resolve, reject) => {
         resolve({ id: image.id, file: randomDefaultImage(), name: image.name });
 
-        // TODO: remove comment
+        // TODO:[3] remove comment
         // const uploadStream = cloudinary.uploader.upload_stream(
         //   { folder }, // Optional: specify a folder in your Cloudinary account
         //   (error, result) => {

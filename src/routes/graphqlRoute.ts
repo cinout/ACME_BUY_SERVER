@@ -40,7 +40,7 @@ export const gqlServer = new ApolloServer({
     resolversWishList,
   ],
   csrfPrevention: true, // TODO:[1] still not recommended: https://www.apollographql.com/blog/file-upload-best-practices
-  cache: "bounded", // TODO: what does this mean?
+  cache: "bounded", // TODO:[3] what does this mean?
   formatError: (error) => {
     console.log(error);
     const isGenericError =

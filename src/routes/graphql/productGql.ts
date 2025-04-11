@@ -267,7 +267,6 @@ export const resolversProduct = {
     },
     getMint: async (_: unknown, { count }: { count: number }) => {
       try {
-        // TODO:[1] need to include product, and find similar genres, artist etc...
         const products = await ProductModel.aggregate([
           {
             $match: {
@@ -284,6 +283,7 @@ export const resolversProduct = {
     },
     getSimilar: async (_: unknown, { count }: { count: number }) => {
       try {
+        // TODO:[1] need to include product, and find similar genres, artist etc...
         const products = await ProductModel.aggregate([
           {
             $match: {
@@ -385,7 +385,6 @@ export const resolversProduct = {
             // sortValue = "year";
             break;
           }
-          // TODO:[3] price should be price X discount
           case "price-desc": {
             sortValue = { discountedPrice: -1 };
             // sortValue = "-price";

@@ -14,7 +14,7 @@ const MessageSchema = new Schema(
     },
     isRead: { type: Boolean, default: false },
 
-    // TODO: check
+    // TODO:[1] check
     // createdAt: { type: Date },
     // updatedAt: { type: Date },
   },

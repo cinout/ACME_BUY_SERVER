@@ -7,13 +7,13 @@ import connectDB from "@/db";
 import { unknownEndpoint } from "./utils/middleware";
 
 // Database Setup
-connectDB(); // TODO: why I don't need to use await? Top-level 'await' expressions are only allowed when the 'module' option is set to 'es2022', 'esnext', 'system', 'node16', 'nodenext', or 'preserve', and the 'target' option is set to 'es2017' or higher
+await connectDB();
 
 // Server Setup
 const app = express();
 app.use(
   cors({
-    origin: ["http://localhost:3000"], //TODO: prod env
+    origin: ["http://localhost:3000"], //TODO:[3] prod env
     credentials: true, // This allows cookies to be sent in cross-origin requests
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
   })

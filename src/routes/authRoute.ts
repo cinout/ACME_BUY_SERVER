@@ -2,7 +2,7 @@ import express from "express";
 import authController from "@/controllers/authController";
 
 const router = express.Router();
-// TODO:[2] move them to graphql
+// TODO:[1] move them to graphql
 
 // User Signup
 router.post("/user-signup", authController.user_signup);
